@@ -46,11 +46,13 @@ class Cinema(models.Model):
 
 class Film(models.Model):
     title = models.CharField(max_length=300)
-    rating = models.CharField(max_length=300)
-    duration = models.DurationField()
-    description = models.CharField(max_length=300)
+    #rating = models.IntegerField(max_length=1)
+    duration = models.IntegerField()
+    short_description = models.CharField(max_length=300)
+    long_description = models.CharField(max_length=300)
     image = models.URLField()
-    trailer_url = models.URLField()
+    #trailer_url = models.URLField()
+    upload_date = models.DateTimeField("date logged")
 
 class Showing(models.Model):
     date = models.DateField()
