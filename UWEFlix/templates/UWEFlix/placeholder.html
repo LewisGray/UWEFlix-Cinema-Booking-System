@@ -8,6 +8,7 @@
   <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors" />
   <meta name="generator" content="Hugo 0.84.0" />
   {% load static %}
+  {% load custom_tags %}
   <link rel="stylesheet" type="text/css" href="{% static 'UWEFlix/style.css' %}"/>
   <title>{% block title %}{% endblock %}</title>
 
@@ -39,7 +40,7 @@
   <header>
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
       <div class="container">
-        <a class="navbar-brand" href="#">UWEFlix</a>
+        <a class="navbar-brand" href="{% url 'home' %}">UWEFlix</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarText"
           aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
@@ -52,15 +53,27 @@
             <li class="nav-item">
               <a class="nav-link" href="{% url 'about' %}">About</a>
             </li>
-            <li class="nav-item">
-              <a class="nav-link" href="{% url 'login' %}">Login</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="{% url 'film_management' %}">Film Management</a>
-            </li>
+            {% if not request.user|logged_in %}
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'login' %}">Login</a>
+              </li>
+            {% endif %}
+            {% if not request.user|logged_in %}
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'register' %}">Register</a>
+              </li>
+            {% endif %}
+            {% if request.user|has_group:"Cinema Manager" %}
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'film_management' %}">Film Management</a>
+              </li>
+            {% endif %}
           </ul>
           <span class="navbar-text">
-
+            {% if request.user|logged_in %}
+              <span class="navbarUserDetails">Howdy, {{ request.user }}</span>
+              <span class="navbarUserDetails"><a href="{% url 'logout' %}">Logout</a></span>
+            {% endif %}
             <div class="btn-group">
               <button type="button" class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown"
                 aria-expanded="false">
