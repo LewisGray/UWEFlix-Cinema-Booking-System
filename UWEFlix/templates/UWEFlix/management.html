@@ -1,0 +1,37 @@
+{% extends "UWEFlix/placeholder.html" %}
+{% block content %}
+  <body>
+    <main role="main">
+
+      <section class="jumbotron text-center">
+        <div class="container">
+          <h1 class="jumbotron-heading">{% block title %}{% endblock %}&nbsp;&nbsp;</h1>
+        <p>
+		    
+        </div>
+        <div class="album py-5 bg-light">
+          <p class="border-middlePage">
+            <div class="card card-body">
+              <a class="btn btn-secondary  btn-sm btn-block" href="{% block addLink %}{% endblock %}">{% block addMessage %}{% endblock %}</a>
+              <table class="table table-sm">
+                <tr>
+                  <th>{% block fieldOne %}{% endblock %}</th>
+                  <th>{% block fieldTwo %}{% endblock %}</th>
+                  <th>{% block fieldThree %}{% endblock %}</th>
+                  <th>{% block fieldFour %}{% endblock %}</th>
+                  <th>Update</th>
+                  <th>Remove</th>
+                </tr>
+                {% block dbObjects %}
+                {% endblock %}
+        
+            
+              </table>
+            </div> 
+        </div>
+      </p>
+      </section>
+      
+    </main>
+  </body>
+{% endblock %}
