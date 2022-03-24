@@ -3,5 +3,23 @@
 Login 
 {% endblock %}
 {% block content %}
-<p>Login page</p>
+    <p>Login page</p>
+    <form method = "POST" actions="" class="accountForm">
+        {% csrf_token %}
+        <div class="accountFormField">
+            <p>{{ form.username.label }}:</p>
+            {{ form.username }}
+        </div>
+        <div class="accountFormField">
+            <p>{{ form.password.label }}:</p>
+            {{ form.password }}
+        </div>
+        <input type="submit" name="Login User" value="Login" class="accountFormSubmit">
+    </form>
+    {{ form.errors }}
+    {% for alert in messages %}
+        <p class="flashMessage">{{ alert }}</p>
+    {% endfor %}
+    <br>
+    <p>Don't have an account? <a href="{% url 'register' %}">Sign Up</a></p>
 {% endblock %}
