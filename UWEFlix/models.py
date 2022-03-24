@@ -50,7 +50,7 @@ class Film(models.Model):
     duration = models.IntegerField()
     short_description = models.CharField(max_length=300)
     long_description = models.CharField(max_length=300)
-    image = models.URLField()
+    image_URL = models.URLField()
     #trailer_url = models.URLField()
     upload_date = models.DateTimeField("date logged")
 
