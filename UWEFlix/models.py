@@ -1,23 +1,6 @@
 from ctypes import addressof
 from django.db import models
 
-# Account models
-
-class AccountManager(models.Model):
-    username = models.CharField(max_length=300)
-    password_hash = models.CharField(max_length=300)
-
-class CinemaManager(models.Model):
-    username = models.CharField(max_length=300)
-    password_hash = models.CharField(max_length=300)
-
-class RepresentativeAccount(models.Model):
-    first_name = models.CharField(max_length=300)
-    last_name = models.CharField(max_length=300)
-    date_of_birth = models.DateField()
-    username = models.CharField(max_length=300)
-    password_hash = models.CharField(max_length=300)
-
 # Club models
 
 class ClubAccount(models.Model):
@@ -27,7 +10,6 @@ class ClubAccount(models.Model):
 
 class Club(models.Model):
     name = models.CharField(max_length=300)
-    representative = models.ForeignKey(RepresentativeAccount, on_delete=models.PROTECT)
     account = models.ForeignKey(ClubAccount, on_delete=models.PROTECT)
     address = models.CharField(max_length=300)
     landline = models.IntegerField()

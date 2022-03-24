@@ -7,6 +7,12 @@ from django.views.generic import ListView
 from UWEFlix.models import Film
 from UWEFlix.forms import *
 from math import *
+from django.contrib.auth import *
+from django.contrib.auth.decorators import *
+from django.contrib.auth.models import Group
+from django.contrib import messages
+from UWEFlix.decorators import *
+
 
 # Class to provide film information for the home page
 class StudentFilmListView(ListView):
@@ -53,11 +59,70 @@ def about(request):
 def movies(request):
     return render(request, "UWEFlix/movies.html")
 
-# About page view navigated from navbar
-def login(request):
-    return render(request, "UWEFlix/login.html")
+# The login page
+@unauthenticated_required
+def loginView(request):
+    # Get the login from from forms.py
+    form = LoginUserForm
+    # If the form is being posted
+    if request.method == "POST":
+        # Get the username
+        username = request.POST.get('username')
+        # Get the password
+        password = request.POST.get('password')
+        # Authenticate the user
+        user = authenticate(request, username=username, password=password)
+        # If the user exists
+        if user is not None:
+            # Login the user
+            login(request, user)
+            # Direct the user to the home page
+            return redirect('/')
+        # otherwise
+        else:
+            # Alert the user the details are incorrect
+            messages.info(request, 'Username or password is incorrect!')
+    # Put the form into the context
+    context = {'form': form}
+    # Render the page with the context
+    return render(request, "UWEFlix/login.html", context)
+
+# Logout view
+def userLogout(request):
+    # Log the user out
+    logout(request)
+    # Redirect them to the home page
+    return redirect('home')
+
+# Provide a registration page
+@unauthenticated_required
+def register(request):
+    # Get the default registration form
+    form = CreateUserForm()
+    # If the registration form is being posted
+    if request.method == "POST":
+        # Fill the form with the form data
+        form = CreateUserForm(request.POST)
+        # If the form is valid
+        if form.is_valid():
+            # Save the form as a user
+            user = form.save()
+            # Get the username from the form
+            username = form.cleaned_data.get("username")
+            # Set the user's group to student - the basic level account
+            user.groups.add(Group.objects.get(name="Student"))
+            # Post that the account was created successfully
+            messages.success(request, 'Account ' + username + ' created successfully!')
+            # Redirect the user to the login page
+            return redirect('login')
+    # Put the form into the context
+    context = {'form': form}
+    # Render the page with the context
+    return render(request, "UWEFlix/register.html", context)
 
 # View to provide cinema manager a UI to manage films
+@login_required(login_url='login')
+@permitted(roles=["Cinema Manager"])
 def film_management_view(request):
     filmList = Film.objects.all()
     return render(request, "UWEFlix/film_manager.html",{'filmList':filmList})
@@ -70,6 +135,12 @@ def account_management_view(request):
 def representative_view(request):
     return render(request, "UWEFlix/representative.html")
 
+# View to provide representative a UI to manage films
+def noAccess(request):
+    return render(request, "UWEFlix/no_access.html")
+
+@login_required(login_url='login')
+@permitted(roles=["Cinema Manager"])
 # Function to allow the addition of films to the database
 def log_film(request):
     # Define the form
@@ -89,6 +160,8 @@ def log_film(request):
         # Take the user to the film creator page
         return render(request, "UWEFlix/filmCRUD/film_form.html", {"form": form})
 
+@login_required(login_url='login')
+@permitted(roles=["Cinema Manager"])
 def updateFilm(request,filmName):
     film = Film.objects.get(title = filmName)
     form = LogFilmForm(instance=film)
@@ -105,6 +178,8 @@ def updateFilm(request,filmName):
             return redirect("home")
     return render(request, "UWEFlix/filmCRUD/film_form.html",{"form": form})
 
+@login_required(login_url='login')
+@permitted(roles=["Cinema Manager"])
 def removeFilm(request,filmName):
     film = Film.objects.get(title = filmName )
     if request.method == "POST":

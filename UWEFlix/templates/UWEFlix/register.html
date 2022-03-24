@@ -1,0 +1,20 @@
+{% extends "UWEFlix/placeholder.html" %}
+{% block title %}
+Register 
+{% endblock %}
+{% block content %}
+    <p>Registration page</p>
+    <form method = "POST" actions="" class="accountForm">
+        {% csrf_token %}
+        {% for field in form %}
+            <div class="accountFormField">
+                <p>{{ field.label }}:</p>
+                {{ field }}
+            </div>
+        {% endfor %} 
+        <input type="submit" name="Create User" value="Register" class="accountFormSubmit">
+    </form>
+    {{ form.errors }}
+    <br>
+    <p>Already have an account? <a href="{% url 'login' %}">Login</a></p>
+{% endblock %}
