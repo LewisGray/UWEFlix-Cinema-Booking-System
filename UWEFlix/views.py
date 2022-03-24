@@ -58,8 +58,9 @@ def login(request):
     return render(request, "UWEFlix/login.html")
 
 # View to provide cinema manager a UI to manage films
-def cinema_management_view(request):
-    return render(request, "UWEFlix/cinema_manager.html")
+def film_management_view(request):
+    filmList = Film.objects.all()
+    return render(request, "UWEFlix/film_manager.html",{'filmList':filmList})
 
 # View to provide account manager a UI to manage accounts
 def account_management_view(request):
@@ -69,10 +70,10 @@ def account_management_view(request):
 def representative_view(request):
     return render(request, "UWEFlix/representative.html")
 
-# Temporary to function to allow the addition of films to the database
-def temp_log_film(request):
+# Function to allow the addition of films to the database
+def log_film(request):
     # Define the form
-    form = TempLogFilmForm(request.POST or None)
+    form = LogFilmForm(request.POST or None)
     # If posting
     if request.method == "POST":
         # If the film is valid
@@ -86,4 +87,27 @@ def temp_log_film(request):
     # Otherwise
     else:
         # Take the user to the film creator page
-        return render(request, "UWEFlix/temp_film_creator.html", {"form": form})
+        return render(request, "UWEFlix/filmCRUD/film_form.html", {"form": form})
+
+def updateFilm(request,filmName):
+    film = Film.objects.get(title = filmName)
+    form = LogFilmForm(instance=film)
+  
+    if request.method == "POST":
+        # If the film is valid
+        form = LogFilmForm(request.POST, instance = film)
+        if form.is_valid():
+           
+            # Save the film details
+            film = form.save(commit=False)
+            film.upload_date = datetime.now()
+            film.save()
+            return redirect("home")
+    return render(request, "UWEFlix/filmCRUD/film_form.html",{"form": form})
+
+def removeFilm(request,filmName):
+    film = Film.objects.get(title = filmName )
+    if request.method == "POST":
+        film.delete()
+        return redirect("home")
+    return render(request, "UWEFlix/filmCRUD/remove_film.html",{"filmName": film.title})

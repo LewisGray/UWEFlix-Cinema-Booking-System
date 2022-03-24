@@ -12,11 +12,13 @@ student_film_list_view = views.StudentFilmListView.as_view(
 urlpatterns = [
     # path("", views.student_view, name="home"),
     path("", student_film_list_view, name="home"), #home screen will be placeholder
-    path("cinema_management/", views.cinema_management_view, name="cinema_management"),
+    path("film_management/", views.film_management_view, name="film_management"),
     path("account_management/", views.account_management_view, name="account_management"),
     path("representative/", views.representative_view, name="represent"),
     path("about/", views.about, name="about"), 
-    path("login/", views.login, name="login"), 
-    path("temp_film_creator/", views.temp_log_film, name="temp_film_creator"), # A temporary page to add films to the database
+    path("login/", views.login, name="login"),
+    path("add_film/", views.log_film, name="add_film"),
+    path("update_film/<str:filmName>", views.updateFilm, name="update_film"),
+    path("remove_film/<str:filmName>", views.removeFilm, name="remove_film"), 
     # path("movies/", views.movies, name="movies"), 
 ]
