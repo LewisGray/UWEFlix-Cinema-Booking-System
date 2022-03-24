@@ -1,51 +1,29 @@
-{% extends "UWEFlix/placeholder.html" %}
-{% block title %}
-Film Management
-{% endblock %}
-{% block content %}
-  <body>
-    <main role="main">
+{% extends "UWEFlix/management.html" %}
+<!--Title of the page  -->
+{% block title %}Film Management{% endblock %}
 
-      <section class="jumbotron text-center">
-        <div class="container">
-          <h1 class="jumbotron-heading">Film Manager&nbsp;&nbsp;</h1>
-        <p>
-		    
-        </div>
-        <div class="album py-5 bg-light">
-          <p class="border-middlePage">
-            <div class="card card-body">
-              <a class="btn btn-secondary  btn-sm btn-block" href="{% url 'add_film' %}">Add a new Film</a>
-              <table class="table table-sm">
-                <tr>
-                  <th>Film Name</th>
-                  <th>Duration</th>
-                  <th>Short description</th>
-                  <th>Upload date</th>
-                  <th>Update</th>
-                  <th>Remove</th>
-                </tr>
-        
-                {% for film in filmList %}
-                  <tr>
-                    <td>{{film.title}}</td>
-                    <td>{{film.duration}}</td>
-                    <td>{{film.short_description}}</td>
-                    <td>{{film.upload_date}}</td>
-                    <td><a class="btn btn-sm btn-outline-info" href="{% url 'update_film' film.title %}">Update</a></td>
-        
-                    <td><a class="btn btn-sm btn-outline-danger" href="{% url 'remove_film' film.title %}">Delete</a></td>
-        
-                  </tr>
-                {% endfor %}
-        
-            
-              </table>
-            </div> 
-        </div>
-      </p>
-      </section>
-      
-    </main>
-  </body>
+<!-- This should include the url to the form for adding a new item to the database -->
+{% block addLink %}{% url 'add_film' %}{% endblock %}
+{% block addMessage %}Add a film!{% endblock %}
+
+<!--These are the column names for the table -->
+{% block fieldOne %}Title{% endblock %}
+{% block fieldTwo %}Description{% endblock %}
+{% block fieldThree %}Duration{% endblock %}
+{% block fieldFour %}Upload date{% endblock %}
+
+<!-- These are the records in our table pulled from the database -->
+{% block dbObjects %}
+{% for film in filmList %}
+  <tr>
+    <td>{{film.title}}</td>
+    <td>{{film.duration}}</td>
+    <td>{{film.short_description}}</td>
+    <td>{{film.upload_date}}</td>
+    <td><a class="btn btn-sm btn-outline-info" href="{% url 'update_film' film.title %}">Update</a></td>
+
+    <td><a class="btn btn-sm btn-outline-danger" href="{% url 'remove_film' film.title %}">Delete</a></td>
+
+  </tr>
+{% endfor %}
 {% endblock %}
