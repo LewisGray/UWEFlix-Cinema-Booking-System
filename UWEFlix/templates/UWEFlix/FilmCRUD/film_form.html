@@ -1,0 +1,14 @@
+{% extends "UWEFlix/placeholder.html" %}
+{% block title %}
+Add film
+{% endblock %}
+{% block content %}
+<div class="album py-5 bg-light">
+  <p class="border-middlePage">
+<form method="POST" class="log-form">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <button type="submit" class="save btn btn-default">Log</button>
+</form>
+</div>
+{% endblock %}
