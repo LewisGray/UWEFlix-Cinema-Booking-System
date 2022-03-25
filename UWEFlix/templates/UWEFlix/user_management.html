@@ -1,0 +1,29 @@
+{% extends "UWEFlix/management.html" %}
+<!--Title of the page  -->
+{% block title %}User Management{% endblock %}
+
+{% for alert in messages %}
+    <p class="flashMessage">{{ alert }}</p>
+{% endfor %}
+
+<!-- This should include the url to the form for adding a new item to the database -->
+{% block addLink %}{% url 'add_user' %}{% endblock %}
+{% block addMessage %}Add a user!{% endblock %}
+
+<!--These are the column names for the table -->
+{% block fieldOne %}Username{% endblock %}
+{% block fieldTwo %}Email{% endblock %}
+{% block fieldThree %}Role{% endblock %}
+
+<!-- These are the records in our table pulled from the database -->
+{% block dbObjects %}
+{% for user, role in user_list %}
+  <tr>
+    <td>{{ user.username }}</td>
+    <td>{{ user.email }}</td>
+    <td>{{ role }}</td>
+    <td><a class="btn btn-sm btn-outline-info" href="{% url 'update_user' user.username %}">Update</a></td>
+    <td><a class="btn btn-sm btn-outline-danger" href="{% url 'remove_user' user.username %}">Delete</a></td>
+  </tr>
+{% endfor %}
+{% endblock %}

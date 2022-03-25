@@ -63,9 +63,20 @@
                 <a class="nav-link" href="{% url 'register' %}">Register</a>
               </li>
             {% endif %}
+            {% if request.user|logged_in and request.user|has_group:"Student" %}
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'user_bookings' %}">My Bookings</a>
+              </li>
+            {% endif %}
             {% if request.user|has_group:"Cinema Manager" %}
               <li class="nav-item">
                 <a class="nav-link" href="{% url 'film_management' %}">Film Management</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'booking_management' %}">Bookings</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'user_management' %}">Users</a>
               </li>
             {% endif %}
             {% if request.user|has_group:"Cinema Manager" %}
