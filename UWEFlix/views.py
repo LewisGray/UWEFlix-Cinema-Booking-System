@@ -144,7 +144,7 @@ def booking_management_view(request):
     #
     booking_list = Booking.objects.all()
     #
-    return render(request, "UWEFlix/booking_management.html", {'booking_list': booking_list})
+    return render(request, "UWEFlix/booking_manager.html", {'booking_list': booking_list})
 
 # View to allow a user to check their bookings
 @login_required(login_url='login')
@@ -152,7 +152,7 @@ def user_bookings(request):
     #
     booking_list = Booking.objects.all()
     #
-    return render(request, "UWEFlix/user_bookings.html", {'booking_list': booking_list})
+    return render(request, "UWEFlix/userBookings_manager.html", {'booking_list': booking_list})
 
 
 # View to provide account manager a UI to manage accounts
@@ -287,7 +287,7 @@ def log_booking(request):
     # Otherwise
     else:
         # Take the user to the film creator page
-        return render(request, "UWEFlix/bookingCRUD/booking_form.html", {"form": form})
+        return render(request, "UWEFlix/bookingCRUD/form.html", {"form": form})
 
 # Update a booking
 @login_required(login_url='login')
@@ -310,7 +310,7 @@ def updateBooking(request, booking_id):
             # Return to the booking management
             return redirect("booking_management")
     # Otherwise, return to the booking form
-    return render(request, "UWEFlix/bookingCRUD/booking_form.html", {"form": form})
+    return render(request, "UWEFlix/bookingCRUD/form.html", {"form": form})
 
 # Remove the booking
 @login_required(login_url='login')
@@ -345,7 +345,7 @@ def user_management_view(request):
     # Package the users with the groups
     zipped_list = zip(user_list, roles)
     # Render the page with the users and groups
-    return render(request, "UWEFlix/user_management.html", {'user_list': zipped_list})
+    return render(request, "UWEFlix/user_manager.html", {'user_list': zipped_list})
 
 # Log the user
 @login_required(login_url='login')
@@ -366,7 +366,7 @@ def log_user(request):
             # Return the user to the homepage
             return redirect("user_management")
     # Take the user to 
-    return render(request, "UWEFlix/userCRUD/user_form.html", {"form": form, "creating": True})
+    return render(request, "UWEFlix/userCRUD/form.html", {"form": form, "creating": True})
 
 # Update the user details
 @login_required(login_url='login')
@@ -414,7 +414,7 @@ def updateUser(request, username):
     # Get all the group names
     groups = Group.objects.all().values_list('name', flat=True)
     # Pass in the form data and the group names
-    return render(request, "UWEFlix/userCRUD/user_form.html", {"form": form, "groups": groups})
+    return render(request, "UWEFlix/userCRUD/form.html", {"form": form, "groups": groups})
 
 # Remove the user from database
 @login_required(login_url='login')
