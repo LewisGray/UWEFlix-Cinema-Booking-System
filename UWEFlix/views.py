@@ -4,7 +4,7 @@ from django.shortcuts import render
 from datetime import datetime
 from django.shortcuts import redirect
 from django.views.generic import ListView
-from UWEFlix.models import Film
+from UWEFlix.models import Film,Club
 from UWEFlix.forms import *
 from math import *
 from django.contrib.auth import *
@@ -127,6 +127,14 @@ def film_management_view(request):
     filmList = Film.objects.all()
     return render(request, "UWEFlix/film_manager.html",{'filmList':filmList})
 
+
+# View to provide cinema manager a UI to manage films
+@login_required(login_url='login')
+@permitted(roles=["Cinema Manager"])
+def club_management_view(request):
+    clubList = Club.objects.all()
+    return render(request, "UWEFlix/club_manager.html",{'clubList':clubList})
+
 # View to provide account manager a UI to manage accounts
 def account_management_view(request):
     return render(request, "UWEFlix/account_manager.html")
@@ -158,7 +166,7 @@ def log_film(request):
     # Otherwise
     else:
         # Take the user to the film creator page
-        return render(request, "UWEFlix/filmCRUD/film_form.html", {"form": form})
+        return render(request, "UWEFlix/filmCRUD/form.html", {"form": form})
 
 @login_required(login_url='login')
 @permitted(roles=["Cinema Manager"])
@@ -176,7 +184,7 @@ def updateFilm(request,filmName):
             film.upload_date = datetime.now()
             film.save()
             return redirect("home")
-    return render(request, "UWEFlix/filmCRUD/film_form.html",{"form": form})
+    return render(request, "UWEFlix/filmCRUD/form.html",{"form": form})
 
 @login_required(login_url='login')
 @permitted(roles=["Cinema Manager"])
@@ -186,3 +194,52 @@ def removeFilm(request,filmName):
         film.delete()
         return redirect("home")
     return render(request, "UWEFlix/filmCRUD/remove_film.html",{"filmName": film.title})
+
+
+
+@login_required(login_url='login')
+@permitted(roles=["Cinema Manager"])
+# Function to allow the addition of clubss to the database
+def log_club(request):
+    # Define the form
+    form = AddClubForm(request.POST or None)
+    # If posting
+    if request.method == "POST":
+        # If the club is valid
+        if form.is_valid():
+            # Save the club details
+            club = form.save(commit=False)
+            club.save()
+            # Return the user to the homepage
+            return redirect("home")
+    # Otherwise
+    else:
+        # Take the user to the form page
+        return render(request, "UWEFlix/filmCRUD/form.html", {"form": form})
+
+
+@login_required(login_url='login')
+@permitted(roles=["Cinema Manager"])
+def updateClub(request,clubName):
+    club = Club.objects.get(name = clubName)
+    form = AddClubForm(instance=film)
+  
+    if request.method == "POST":
+        # If the club is valid
+        form = AddClubForm(request.POST, instance = film)
+        if form.is_valid():
+           
+            # Save the club details
+            film = form.save(commit=False)
+            film.save()
+            return redirect("home")
+    return render(request, "UWEFlix/filmCRUD/form.html",{"form": form})
+
+@login_required(login_url='login')
+@permitted(roles=["Cinema Manager"])
+def removeClub(request,clubName):
+    club = Club.objects.get(name = clubName)
+    if request.method == "POST":
+        club.delete()
+        return redirect("home")
+    return render(request, "UWEFlix/filmCRUD/remove_film.html",{"clubName": club.name})

@@ -1,20 +1,24 @@
+from asyncio.windows_events import NULL
 from ctypes import addressof
 from django.db import models
+from django.contrib.auth.models import User
 
+
+class Club(models.Model):
+    name = models.CharField(max_length=300, primary_key=True)
+    representative = models.ForeignKey(User, on_delete=models.PROTECT)
+    address = models.CharField(max_length=300)
+    landline = models.CharField(max_length=11)
+    mobile = models.CharField(max_length=11)
+    email = models.EmailField(max_length=30)
+    
 # Club models
 
 class ClubAccount(models.Model):
     account_title = models.CharField(max_length=300)
     card_number = models.IntegerField()
     expiry_date = models.DateField()
-
-class Club(models.Model):
-    name = models.CharField(max_length=300)
-    account = models.ForeignKey(ClubAccount, on_delete=models.PROTECT)
-    address = models.CharField(max_length=300)
-    landline = models.IntegerField()
-    mobile = models.IntegerField()
-    email = models.EmailField()
+    club = models.ForeignKey(Club, on_delete=models.CASCADE)
 
 # Cinema models
 
