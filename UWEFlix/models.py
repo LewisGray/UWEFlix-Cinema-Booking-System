@@ -43,6 +43,7 @@ class Showing(models.Model):
     time = models.TimeField()
     film = models.ForeignKey(Film, on_delete=models.PROTECT)
     screen = models.ForeignKey(Screen, on_delete=models.PROTECT)
+    taken_tickets = models.IntegerField()
 
 # Customer models
 
@@ -53,10 +54,8 @@ class Customer(models.Model):
     expiry_date = models.DateField()
 
 class Booking(models.Model):
-    customer = models.ForeignKey(Customer, on_delete=models.PROTECT)
+    customer = models.ForeignKey(User, on_delete=models.PROTECT)
     showing = models.ForeignKey(Showing, on_delete=models.PROTECT)
-
-class Ticket(models.Model):
-    type = ["student", "child", "adult"]
-    number = models.IntegerField()
-    booking = models.ForeignKey(Booking, on_delete=models.PROTECT) 
+    student_tickets = models.IntegerField()
+    child_tickets = models.IntegerField()
+    adult_tickets = models.IntegerField()

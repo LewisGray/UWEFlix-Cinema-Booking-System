@@ -5,7 +5,7 @@ from datetime import datetime
 from django.shortcuts import redirect
 from django.views.generic import ListView
 from UWEFlix.email import sendEmail
-from UWEFlix.models import Film, Booking
+from UWEFlix.models import Film, Booking, Showing
 from UWEFlix.forms import *
 from math import *
 from django.contrib.auth import *
@@ -14,6 +14,7 @@ from django.contrib.auth.models import Group
 from django.contrib import messages
 from UWEFlix.decorators import *
 from email import *
+from django.contrib.auth.forms import PasswordChangeForm
 
 
 # Class to provide film information for the home page
@@ -124,7 +125,7 @@ def register(request):
 
 # View to provide cinema manager a UI to manage films
 @login_required(login_url='login')
-@permitted(roles=["Cinema Manager"])
+@permitted(roles=["Cinema Manager", "Cinema Employee"])
 def film_management_view(request):
     filmList = Film.objects.all()
     return render(request, "UWEFlix/film_manager.html",{'filmList':filmList})
@@ -139,7 +140,7 @@ def club_management_view(request):
 
 # View to provide cinema manager a UI to manage user bookings
 @login_required(login_url='login')
-@permitted(roles=["Cinema Manager"])
+@permitted(roles=["Cinema Manager", "Cinema Employee"])
 def booking_management_view(request):
     #
     booking_list = Booking.objects.all()
@@ -168,7 +169,7 @@ def noAccess(request):
     return render(request, "UWEFlix/no_access.html")
 
 @login_required(login_url='login')
-@permitted(roles=["Cinema Manager"])
+@permitted(roles=["Cinema Manager", "Cinema Employee"])
 # Function to allow the addition of films to the database
 def log_film(request):
     # Define the form
@@ -190,8 +191,8 @@ def log_film(request):
 
 #Update a film in the database
 @login_required(login_url='login')
-@permitted(roles=["Cinema Manager"])
-def updateFilm(request,filmName):
+@permitted(roles=["Cinema Manager", "Cinema Employee"])
+def updateFilm(request, filmName):
     film = Film.objects.get(title = filmName)
     form = LogFilmForm(instance=film)
   
@@ -208,11 +209,26 @@ def updateFilm(request,filmName):
     return render(request, "UWEFlix/CRUD/form.html",{"form": form})
 
 @login_required(login_url='login')
-@permitted(roles=["Cinema Manager"])
+@permitted(roles=["Cinema Manager", "Cinema Employee"])
 def removeFilm(request,object):
-    film = Film.objects.get(title = object )
+    film = Film.objects.get(title = object)
     if request.method == "POST":
-        film.delete()
+        # Get all the showings
+        showings = Showing.objects.all()
+        # Is the film currently showing?
+        current_showing = False
+        # For each showing
+        for showing in showings:
+            # If the showing's film is the film to delete
+            if showing.film == film:
+                # Mark the film as currently showing
+                current_showing = True
+                # Break the loop
+                break
+        # If the film isn't currently showing
+        if current_showing == False:
+            # Delete the film from the database
+            film.delete()
         return redirect("film_management")
     return render(request, "UWEFlix/CRUD/remove.html",{"object": film.title})
 
@@ -268,7 +284,7 @@ def removeClub(request,object):
 
 # Log a booking
 @login_required(login_url='login')
-@permitted(roles=["Cinema Manager"])
+@permitted(roles=["Cinema Manager", "Cinema Employee"])
 def log_booking(request):
     # Define the form
     form = LogBookingForm(request.POST or None)
@@ -290,7 +306,7 @@ def log_booking(request):
 
 # Update a booking
 @login_required(login_url='login')
-@permitted(roles=["Cinema Manager"])
+@permitted(roles=["Cinema Manager", "Cinema Employee"])
 def updateBooking(request, booking_id):
     # Get the booking object with a matching ID
     booking = Booking.objects.get(id = booking_id)
@@ -313,7 +329,7 @@ def updateBooking(request, booking_id):
 
 # Remove the booking
 @login_required(login_url='login')
-@permitted(roles=["Cinema Manager"])
+@permitted(roles=["Cinema Manager", "Cinema Employee"])
 def removeBooking(request, booking_id):
     # Get the booking with matching ID
     booking = Film.objects.get(id = booking_id)
@@ -330,6 +346,7 @@ def removeBooking(request, booking_id):
 
 # View to allow the cinema manager to manage the users
 @login_required(login_url='login')
+@permitted(roles=["Cinema Manager"])
 def user_management_view(request):
     # Get all the users
     user_list = User.objects.all()
@@ -341,6 +358,8 @@ def user_management_view(request):
         for group in u.groups.all():
             # Get the group name
             roles.append(group.name)
+            # Stop after the first role
+            break
     # Package the users with the groups
     zipped_list = zip(user_list, roles)
     # Render the page with the users and groups
@@ -371,8 +390,6 @@ def log_user(request):
 @login_required(login_url='login')
 @permitted(roles=["Cinema Manager"])
 def updateUser(request, username):
-    # Get all the groups
-    groups = Group.objects.all()
     # Get a user with the matching username
     user = User.objects.get(username = username)
     # Get the form
@@ -384,7 +401,7 @@ def updateUser(request, username):
             # Establish a password
             password = "Password*1"
             # Set the user password
-            user.password = password
+            user.set_password(password)
             # messages.success(request, 'Password for ' + username + ' reset to ' + password + ' successfully!')
             # Return to the user amnagement page
             return redirect("user_management")
@@ -399,6 +416,8 @@ def updateUser(request, username):
                 user.save()
                 # Get the group from the dropdown
                 selected_group = request.POST.get("selected_group")
+                # Get all the groups
+                groups = Group.objects.all()
                 # For each group
                 for group in groups:
                     # Remove the user from the group
@@ -429,4 +448,45 @@ def removeUser(request, username):
         # Return to the user management page
         return redirect("user_management")
     # Go to the remove user page, passing in the username
-    return render(request, "UWEFlix/userCRUD/remove_user.html", {"object": user.username})
+    return render(request, "UWEFlix/CRUD/remove.html", {"object": user.username})
+
+# Update own account details
+@login_required(login_url='login')
+def accountView(request):
+    #
+    user = request.user
+    #
+    password_form = PasswordChangeForm(request.user)
+    #
+    update_form = UpdateAccountForm(instance = user)
+    #
+    if request.method == "POST":
+        #
+        if "update_account" in request.POST:
+            #
+            update_form = UpdateAccountForm(request.POST, instance = user)
+            # If the form is valid
+            if update_form.is_valid():           
+                # Save the club details
+                user = update_form.save(commit = False)
+                user.save()
+                #
+                return redirect("home")
+        #
+        else:
+            #
+            password_form = PasswordChangeForm(request.user, request.POST)
+            # If the form is valid
+            if password_form.is_valid():    
+                #       
+                user = password_form.save()
+                #
+                update_session_auth_hash(request, user)
+                #
+                #messages.success(request, 'Your password was successfully updated!')
+                #
+                return redirect('home')
+            else:
+                messages.error(request, 'Please correct the error below.')
+    #
+    return render(request, "UWEFlix/account.html", {"update_form": update_form, "password_form": password_form})
