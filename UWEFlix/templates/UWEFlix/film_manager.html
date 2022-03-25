@@ -7,10 +7,10 @@
 {% block addMessage %}Add a film!{% endblock %}
 
 <!--These are the column names for the table -->
-{% block fieldOne %}Title{% endblock %}
-{% block fieldTwo %}Description{% endblock %}
-{% block fieldThree %}Duration{% endblock %}
-{% block fieldFour %}Upload date{% endblock %}
+{% block fieldOne %}<th>Title</th>{% endblock %}
+{% block fieldTwo %}<th>Description</th>{% endblock %}
+{% block fieldThree %}<th>Duration</th>{% endblock %}
+{% block fieldFour %}<th>Upload date</th>{% endblock %}
 
 <!-- These are the records in our table pulled from the database -->
 {% block dbObjects %}
@@ -21,7 +21,6 @@
     <td>{{film.short_description}}</td>
     <td>{{film.upload_date}}</td>
     <td><a class="btn btn-sm btn-outline-info" href="{% url 'update_film' film.title %}">Update</a></td>
-
     <td><a class="btn btn-sm btn-outline-danger" href="{% url 'remove_film' film.title %}">Delete</a></td>
 
   </tr>

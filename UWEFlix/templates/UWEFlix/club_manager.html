@@ -1,0 +1,29 @@
+{% extends "UWEFlix/management.html" %}
+{% block title %}Club Management{% endblock %}
+{% block addLink %}{% url 'add_club' %}{% endblock %}
+{% block addMessage %}Add a new club!{% endblock %}
+
+{% block fieldOne %}<th>Club Name</th>{% endblock %}
+{% block fieldTwo %}<th>Representative</th>{% endblock %}
+{% block fieldThree %}<th>Address</th>{% endblock %}
+{% block fieldFour %}<th>Landline</th>{% endblock %}
+{% block fieldFive %}<th>Mobile</th>{% endblock %}
+{% block fieldSix %}<th>Email</th>{% endblock %}
+
+
+
+{% block dbObjects %}
+{% for club in clubList %}
+  <tr>
+    <td>{{club.name}}</td>
+    <td>{{club.representative}}</td>
+    <td>{{club.address}}</td>
+    <td>{{club.landline}}</td>
+    <td>{{club.mobile}}</td>
+    <td>{{club.email}}</td>
+    <td><a class="btn btn-sm btn-outline-info" href="{% url 'update_club' club.name %}">Update</a></td>
+    <td><a class="btn btn-sm btn-outline-danger" href="{% url 'remove_club' club.name %}">Delete</a></td>
+
+  </tr>
+{% endfor %}
+{% endblock %}
