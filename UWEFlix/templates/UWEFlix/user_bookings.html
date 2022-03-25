@@ -1,0 +1,24 @@
+{% extends "UWEFlix/management.html" %}
+<!--Title of the page  -->
+{% block title %}My Bookings{% endblock %}
+
+<!--These are the column names for the table -->
+{% block fieldOne %}Film{% endblock %}
+{% block fieldTwo %}Date{% endblock %}
+{% block fieldThree %}Time{% endblock %}
+{% block fieldFour %}Screen{% endblock %}
+{% block fieldFive %}Tickets{% endblock %}
+
+<!-- These are the records in our table pulled from the database -->
+{% block dbObjects %}
+{% for booking in booking_list %}
+  <tr>
+    <td>{{ booking.film_title }}</td>
+    <td>{{ booking.date }}</td>
+    <td>{{ booking.time }}</td>
+    <td>{{ booking.screen }}</td>
+    <td>{{ booking.tickets }}</td>
+    <td><a class="btn btn-sm btn-outline-info" href="{% url 'update_film' film.title %}">Request Cancellation</a></td>
+  </tr>
+{% endfor %}
+{% endblock %}

@@ -1,15 +1,15 @@
 {% extends "UWEFlix/placeholder.html" %}
 {% block title %}
-Remove film
+Remove user
 {% endblock %}
 {% block content %}
-<p>WARNING: You are about to delete "{{filmName}}"! 
+<p>WARNING: You are about to delete "{{ username }}"! 
   This action is permanent and connot be undone. 
   Are you sure you want to do this?</p>
 <form method = "POST">
   {% csrf_token %}
-  <a href="{% url 'film_management' %}">No,I want to keep this film</a>
-  <button type="submit" class="save btn btn-default">Yes, delete "{{filmName}}" </button>
+  <a href="{% url 'user_management' %}">No,I want to keep this user</a>
+  <button type="submit" class="save btn btn-default">Yes, delete "{{ username }}" </button>
 </form>
 </div>
 {% endblock %}
