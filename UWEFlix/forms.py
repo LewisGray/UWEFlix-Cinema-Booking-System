@@ -1,6 +1,6 @@
 from dataclasses import fields
 from django import forms
-from UWEFlix.models import Film,Club
+from UWEFlix.models import Film,Club,Booking
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 
@@ -22,6 +22,25 @@ class AddClubForm(forms.ModelForm):
         # Define the fields to be included in the film
         fields = ("name", "representative", "address", "landline", "mobile", "email")
 
+
+# A form to add a user to the database
+class LogUserForm(forms.ModelForm):
+    # Metadata class
+    class Meta:
+        # Set the model type to film
+        model = User
+        # Define the fields to be included in the film
+        fields = ("username", "email")
+
+# A form to add a user to the database
+class LogBookingForm(forms.ModelForm):
+    # Metadata class
+    class Meta:
+        # Set the model type to film
+        model = Booking
+        # Define the fields to be included in the film
+        fields = ()
+
 # A form to create a new user
 class CreateUserForm(UserCreationForm):
     # metadata
@@ -30,6 +49,7 @@ class CreateUserForm(UserCreationForm):
         model = User
         # Get the username, email, password and checking password
         fields = ['username', 'email', 'password1', 'password2']
+
 
 # A form to login the user
 class LoginUserForm(forms.ModelForm):

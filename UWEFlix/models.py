@@ -21,7 +21,6 @@ class ClubAccount(models.Model):
     club = models.ForeignKey(Club, on_delete=models.CASCADE)
 
 # Cinema models
-
 class Screen(models.Model):
     number = models.IntegerField()
     capacity = models.IntegerField()
@@ -61,4 +60,4 @@ class Booking(models.Model):
 class Ticket(models.Model):
     type = ["student", "child", "adult"]
     number = models.IntegerField()
-    booking = models.ForeignKey(Booking, on_delete=models.PROTECT)
+    booking = models.ForeignKey(Booking, on_delete=models.PROTECT) 
