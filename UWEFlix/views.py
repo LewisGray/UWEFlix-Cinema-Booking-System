@@ -182,11 +182,11 @@ def log_film(request):
             film.upload_date = datetime.now()
             film.save()
             # Return the user to the homepage
-            return redirect("home")
+            return redirect("film_management")
     # Otherwise
     else:
         # Take the user to the film creator page
-        return render(request, "UWEFlix/filmCRUD/form.html", {"form": form})
+        return render(request, "UWEFlix/CRUD/form.html", {"form": form})
 
 #Update a film in the database
 @login_required(login_url='login')
@@ -204,8 +204,8 @@ def updateFilm(request,filmName):
             film = form.save(commit=False)
             film.upload_date = datetime.now()
             film.save()
-            return redirect("home")
-    return render(request, "UWEFlix/filmCRUD/form.html",{"form": form})
+            return redirect("film_management")
+    return render(request, "UWEFlix/CRUD/form.html",{"form": form})
 
 @login_required(login_url='login')
 @permitted(roles=["Cinema Manager"])
@@ -213,8 +213,8 @@ def removeFilm(request,object):
     film = Film.objects.get(title = object )
     if request.method == "POST":
         film.delete()
-        return redirect("home")
-    return render(request, "UWEFlix/filmCRUD/remove_film.html",{"object": film.title})
+        return redirect("film_management")
+    return render(request, "UWEFlix/CRUD/remove.html",{"object": film.title})
 
 
 #Remove a film from the database
@@ -232,11 +232,11 @@ def log_club(request):
             club = form.save(commit=False)
             club.save()
             # Return the user to the homepage
-            return redirect("home")
+            return redirect("club_management")
     # Otherwise
     else:
         # Take the user to the form page
-        return render(request, "UWEFlix/filmCRUD/form.html", {"form": form})
+        return render(request, "UWEFlix/CRUD/form.html", {"form": form})
 
 
 @login_required(login_url='login')
@@ -253,8 +253,8 @@ def updateClub(request,clubName):
             # Save the club details
             club = form.save(commit=False)
             club.save()
-            return redirect("home")
-    return render(request, "UWEFlix/filmCRUD/form.html",{"form": form})
+            return redirect("club_management")
+    return render(request, "UWEFlix/CRUD/form.html",{"form": form})
 
 @login_required(login_url='login')
 @permitted(roles=["Cinema Manager"])
@@ -262,9 +262,8 @@ def removeClub(request,object):
     club = Club.objects.get(name = object)
     if request.method == "POST":
         club.delete()
-        return redirect("home")
-    return render(request, "UWEFlix/filmCRUD/remove_film.html",{"object": club.name})
-
+        return redirect("club_management")
+    return render(request, "UWEFlix/CRUD/remove.html",{"object": club.name})
 
 
 # Log a booking
@@ -283,11 +282,11 @@ def log_booking(request):
             booking.save()
             #messages.success(request, 'Booking ' + booking.id + ' created successfully!')
             # Return the user to the homepage
-            return redirect("home")
+            return redirect("booking_management")
     # Otherwise
     else:
         # Take the user to the film creator page
-        return render(request, "UWEFlix/bookingCRUD/form.html", {"form": form})
+        return render(request, "UWEFlix/CRUD/form.html", {"form": form})
 
 # Update a booking
 @login_required(login_url='login')
@@ -310,7 +309,7 @@ def updateBooking(request, booking_id):
             # Return to the booking management
             return redirect("booking_management")
     # Otherwise, return to the booking form
-    return render(request, "UWEFlix/bookingCRUD/form.html", {"form": form})
+    return render(request, "UWEFlix/CRUD/form.html", {"form": form})
 
 # Remove the booking
 @login_required(login_url='login')
@@ -326,7 +325,7 @@ def removeBooking(request, booking_id):
         # Return to the booking management page
         return redirect("booking_management")
     # Render the remove booking page
-    return render(request, "UWEFlix/bookingCRUD/remove_film.html", {"object": booking.id})
+    return render(request, "UWEFlix/CRUD/remove.html", {"object": booking.id})
 
 
 # View to allow the cinema manager to manage the users
@@ -430,4 +429,4 @@ def removeUser(request, username):
         # Return to the user management page
         return redirect("user_management")
     # Go to the remove user page, passing in the username
-    return render(request, "UWEFlix/userCRUD/remove_film.html", {"object": user.username})
+    return render(request, "UWEFlix/userCRUD/remove_user.html", {"object": user.username})
