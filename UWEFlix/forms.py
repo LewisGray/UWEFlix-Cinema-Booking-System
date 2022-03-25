@@ -39,7 +39,7 @@ class LogBookingForm(forms.ModelForm):
         # Set the model type to film
         model = Booking
         # Define the fields to be included in the film
-        fields = ('customer', 'showing')
+        fields = ('customer', 'showing', 'adult_tickets', 'student_tickets', 'child_tickets')
 
 # A form to create a new user
 class CreateUserForm(UserCreationForm):
@@ -49,7 +49,6 @@ class CreateUserForm(UserCreationForm):
         model = User
         # Get the username, email, password and checking password
         fields = ['username', 'email', 'password1', 'password2']
-
 
 # A form to login the user
 class LoginUserForm(forms.ModelForm):
@@ -61,3 +60,12 @@ class LoginUserForm(forms.ModelForm):
         fields = ['username', 'password']
         # Set the password as a password input to hide the text
         widgets = {'password': forms.PasswordInput()}
+
+#
+class UpdateAccountForm(forms.ModelForm):
+    # metadata
+    class Meta:
+        # Using User models
+        model = User
+        # Get the username, email, password and checking password
+        fields = ['username', 'email']

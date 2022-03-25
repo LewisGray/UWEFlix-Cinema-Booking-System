@@ -8,7 +8,7 @@ Remove film
   Are you sure you want to do this?</p>
 <form method = "POST">
   {% csrf_token %}
-  <a href="{% url 'film_management' %}">No,I want to keep this film</a>
+  <a href="{{ request.META.HTTP_REFERER }}">No, I want to keep "{{object}}"</a>
   <button type="submit" class="save btn btn-default">Yes, delete "{{object}}" </button>
 </form>
 </div>

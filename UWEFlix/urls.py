@@ -20,6 +20,7 @@ urlpatterns = [
     path("login/", views.loginView, name="login"),
     path("logout/", views.userLogout, name="logout"),
     path("register/", views.register, name="register"),
+    path("account/", views.accountView, name="account"),
     path("accesss_denied/", views.noAccess, name="no_access"),
     path("add_film/", views.log_film, name="add_film"),
     path("update_film/<str:filmName>", views.updateFilm, name="update_film"),

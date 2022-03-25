@@ -17,6 +17,7 @@ Add user_bookings
     </select>
   {% endif %}
   <br>    
+  <a href="{{ request.META.HTTP_REFERER }}">Cancel</a>
   <button type="submit" class="save btn btn-default">Update</button>
   {% if not creating %}
     <button type="submit" name="reset_password" class="save btn btn-default">Reset Password</button>

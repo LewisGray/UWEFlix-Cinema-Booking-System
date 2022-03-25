@@ -1,0 +1,32 @@
+{% extends "UWEFlix/placeholder.html" %}
+{% block title %}
+Account 
+{% endblock %}
+{% block content %}
+    <p>Account page</p>
+    <p>Update account details...</p>
+    <form method = "POST" actions="">
+        {% csrf_token %}
+        <div>
+            <p>{{ update_form.username.label }}:</p>
+            {{ update_form.username }}
+        </div>
+        <div>
+            <p>{{ update_form.email.label }}:</p>
+            {{ update_form.email }}
+        </div>
+        <input type="submit" name="update_account" class="accountFormSubmit">
+    </form>
+    <p>Update password...</p>
+    <form method = "POST" actions="">
+        {% csrf_token %}
+        {{ password_form.as_p }}
+        <input type="submit" name="update_password" class="accountFormSubmit">
+    </form>
+    {{ form.errors }}
+    {% for alert in messages %}
+        <p class="flashMessage">{{ alert }}</p>
+    {% endfor %}
+    <br>
+    <a href="{{ request.META.HTTP_REFERER }}">Back</a>
+{% endblock %}

@@ -7,17 +7,21 @@
 {% block fieldTwo %}<th>Date</th>{% endblock %}
 {% block fieldThree %}<th>Time</th>{% endblock %}
 {% block fieldFour %}<th>Screen</th>{% endblock %}
-{% block fieldFive %}<th>Tickets</th>{% endblock %}
+{% block fieldFive %}<th>Adults</th>{% endblock %}
+{% block fieldSix %}<th>Students</th>{% endblock %}
+{% block fieldSeven %}<th>Children</th>{% endblock %}
 
 <!-- These are the records in our table pulled from the database -->
 {% block dbObjects %}
 {% for booking in booking_list %}
   <tr>
-    <td>{{ booking.film_title }}</td>
-    <td>{{ booking.date }}</td>
-    <td>{{ booking.time }}</td>
-    <td>{{ booking.screen }}</td>
-    <td>{{ booking.tickets }}</td>
+    <td>{{ booking.showing.film.title }}</td>
+    <td>{{ booking.showing.date }}</td>
+    <td>{{ booking.showing.time }}</td>
+    <td>{{ booking.showing.screen }}</td>
+    <td>{{ booking.adult_tickets }}</td>
+    <td>{{ booking.student_tickets }}</td>
+    <td>{{ booking.child_tickets }}</td>
     <td><a class="btn btn-sm btn-outline-info" href="{% url 'update_film' film.title %}">Request Cancellation</a></td>
   </tr>
 {% endfor %}
