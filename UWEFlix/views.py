@@ -188,12 +188,12 @@ def updateFilm(request,filmName):
 
 @login_required(login_url='login')
 @permitted(roles=["Cinema Manager"])
-def removeFilm(request,filmName):
-    film = Film.objects.get(title = filmName )
+def removeFilm(request,object):
+    film = Film.objects.get(title = object )
     if request.method == "POST":
         film.delete()
         return redirect("home")
-    return render(request, "UWEFlix/filmCRUD/remove_film.html",{"filmName": film.title})
+    return render(request, "UWEFlix/filmCRUD/remove_film.html",{"object": film.title})
 
 
 
@@ -222,24 +222,24 @@ def log_club(request):
 @permitted(roles=["Cinema Manager"])
 def updateClub(request,clubName):
     club = Club.objects.get(name = clubName)
-    form = AddClubForm(instance=film)
+    form = AddClubForm(instance=club)
   
     if request.method == "POST":
         # If the club is valid
-        form = AddClubForm(request.POST, instance = film)
+        form = AddClubForm(request.POST, instance = club)
         if form.is_valid():
            
             # Save the club details
-            film = form.save(commit=False)
-            film.save()
+            club = form.save(commit=False)
+            club.save()
             return redirect("home")
     return render(request, "UWEFlix/filmCRUD/form.html",{"form": form})
 
 @login_required(login_url='login')
 @permitted(roles=["Cinema Manager"])
-def removeClub(request,clubName):
-    club = Club.objects.get(name = clubName)
+def removeClub(request,object):
+    club = Club.objects.get(name = object)
     if request.method == "POST":
         club.delete()
         return redirect("home")
-    return render(request, "UWEFlix/filmCRUD/remove_film.html",{"clubName": club.name})
+    return render(request, "UWEFlix/filmCRUD/remove_film.html",{"object": club.name})

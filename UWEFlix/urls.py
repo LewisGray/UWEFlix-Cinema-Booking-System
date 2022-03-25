@@ -23,9 +23,9 @@ urlpatterns = [
     path("accesss_denied/", views.noAccess, name="no_access"),
     path("add_film/", views.log_film, name="add_film"),
     path("update_film/<str:filmName>", views.updateFilm, name="update_film"),
-    path("remove_film/<str:filmName>", views.removeFilm, name="remove_film"),
+    path("remove_film/<str:object>", views.removeFilm, name="remove_film"),
     path("add_club/", views.log_club, name="add_club"),
     path("update_club/<str:clubName>", views.updateClub, name="update_club"),
-    path("remove_club/<str:clubName>", views.removeClub, name="remove_club"),
+    path("remove_club/<str:object>", views.removeClub, name="remove_club"),
     # path("movies/", views.movies, name="movies"), 
 ]
