@@ -57,3 +57,8 @@ class Customer(models.Model):
 class Booking(models.Model):
     customer = models.ForeignKey(Customer, on_delete=models.PROTECT)
     showing = models.ForeignKey(Showing, on_delete=models.PROTECT)
+
+class Ticket(models.Model):
+    type = ["student", "child", "adult"]
+    number = models.IntegerField()
+    booking = models.ForeignKey(Booking, on_delete=models.PROTECT)
