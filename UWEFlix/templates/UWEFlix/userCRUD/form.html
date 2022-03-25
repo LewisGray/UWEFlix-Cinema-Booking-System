@@ -1,0 +1,26 @@
+{% extends "UWEFlix/placeholder.html" %}
+{% block title %}
+Add user_bookings
+{% endblock %}
+{% block content %}
+<div class="album py-5 bg-light">
+  <p class="border-middlePage">
+<form method="POST" class="log-form">
+  {% csrf_token %}
+  {{ form.as_p }}
+  {% if not creating %}
+    <p>User group: </p>
+    <select name="selected_group">
+      {% for group in groups %}
+          <option value="{{ group }}">{{ group }}</li>
+      {% endfor %}
+    </select>
+  {% endif %}
+  <br>    
+  <button type="submit" class="save btn btn-default">Update</button>
+  {% if not creating %}
+    <button type="submit" name="reset_password" class="save btn btn-default">Reset Password</button>
+  {% endif %}
+</form>
+</div>
+{% endblock %}

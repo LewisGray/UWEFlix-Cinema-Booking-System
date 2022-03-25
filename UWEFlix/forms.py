@@ -39,7 +39,7 @@ class LogBookingForm(forms.ModelForm):
         # Set the model type to film
         model = Booking
         # Define the fields to be included in the film
-        fields = ()
+        fields = ('customer', 'showing')
 
 # A form to create a new user
 class CreateUserForm(UserCreationForm):
