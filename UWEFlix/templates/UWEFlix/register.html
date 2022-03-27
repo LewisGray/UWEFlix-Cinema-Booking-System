@@ -3,7 +3,9 @@
 Register 
 {% endblock %}
 {% block content %}
-    <p>Registration page</p>
+<section class="py-5 text-center container">
+    <h1 class="jumbotron-heading">Registration page</h1>
+</section>
     <form method = "POST" actions="" class="accountForm">
         {% csrf_token %}
         {% for field in form %}
@@ -12,9 +14,9 @@ Register
                 {{ field }}
             </div>
         {% endfor %} 
-        <input type="submit" name="Create User" value="Register" class="accountFormSubmit">
+        <input type="submit" name="Create User" value="Register" class="accountFormSubmit btn-primary">
     </form>
     {{ form.errors }}
     <br>
-    <p>Already have an account? <a href="{% url 'login' %}">Login</a></p>
+    <p class="text-center">Already have an account? <a href="{% url 'login' %}">Login</a></p>
 {% endblock %}

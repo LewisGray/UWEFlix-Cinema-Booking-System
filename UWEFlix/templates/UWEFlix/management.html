@@ -4,17 +4,17 @@
     <main role="main">
 
       <section class="jumbotron text-center">
-        <div class="container">
+        <div class="container py-5">
           <h1 class="jumbotron-heading">{% block title %}{% endblock %}&nbsp;&nbsp;</h1>
-        <p>
 		    
         </div>
         <div class="album py-5 bg-light">
           <p class="border-middlePage">
-            <div class="card card-body">
-              <a class="btn btn-secondary  btn-sm btn-block" href="{% block addLink %}{% endblock %}">{% block addMessage %}{% endblock %}</a>
-              <table class="table table-sm">
-                <tr>
+              <a class="btn btn-primary  btn-sm btn-block" href="{% block addLink %}{% endblock %}">{% block addMessage %}{% endblock %}</a>
+            <!-- <div class="card card-body"> -->
+             
+              <table class="table table-sm table-hover">
+                <thead>
                   {% block fieldOne %}{% endblock %}
                   {% block fieldTwo %}{% endblock %}
                   {% block fieldThree %}{% endblock %}
@@ -23,13 +23,14 @@
                   {% block fieldSix %}{% endblock %}
                   <th>Update</th>
                   <th>Remove</th>
-                </tr>
+              </thead>
+              <tbody>
                 {% block dbObjects %}
                 {% endblock %}
+                </tbody>
               </table>
-            </div> 
+            <!-- </div>  -->
         </div>
-      </p>
       </section>
       
     </main>
