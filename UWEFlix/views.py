@@ -5,7 +5,7 @@ from datetime import datetime
 from django.shortcuts import redirect
 from django.views.generic import ListView
 from UWEFlix.email import sendEmail
-from UWEFlix.models import Film, Booking, Showing
+from UWEFlix.models import ClubAccount, Film, Booking, Showing
 from UWEFlix.forms import *
 from math import *
 from django.contrib.auth import *
@@ -490,3 +490,73 @@ def accountView(request):
                 messages.error(request, 'Please correct the error below.')
     #
     return render(request, "UWEFlix/account.html", {"update_form": update_form, "password_form": password_form})
+
+
+# View to provide account manager a UI to manage club accounts
+@login_required(login_url='login')
+@permitted(roles=["Cinema Manager", "Account Manager"])
+def account_management_view(request):
+    # Get a list of all the accounts
+    account_list = ClubAccount.objects.all()
+    # Return the account manager page with a list of accounts
+    return render(request, "UWEFlix/account_manager.html", {'account_list': account_list})
+
+# Log an account
+@login_required(login_url='login')
+@permitted(roles=["Cinema Manager", "Account Manager"])
+def log_account(request):
+    # Define the form
+    form = LogAccountForm(request.POST or None)
+    # If posting
+    if request.method == "POST":
+        # If the account is valid
+        if form.is_valid():
+            # Save the account details
+            booking = form.save(commit=False)
+            booking.save()
+            #messages.success(request, 'Booking ' + booking.id + ' created successfully!')
+            # Return the user to the homepage
+            return redirect("account_management")
+    # Otherwise
+    else:
+        # Take the user to the film creator page
+        return render(request, "UWEFlix/CRUD/form.html", {"form": form})
+
+# Update an account
+@login_required(login_url='login')
+@permitted(roles=["Cinema Manager", "Account Manager"])
+def updateAccount(request, account_id):
+    # Get the account object with a matching ID
+    account = ClubAccount.objects.get(id = account_id)
+    # Get the account form
+    form = LogAccountForm(instance = account)
+    # If the form is being posted
+    if request.method == "POST":
+        # Get the account information
+        form = LogAccountForm(request.POST, instance = account)
+        # If the account is valid
+        if form.is_valid():
+            # Save the account details
+            account = form.save(commit=False)
+            account.save()
+            #messages.success(request, 'Details for ' + booking_id + ' updated successfully!')
+            # Return to the account management
+            return redirect("account_management")
+    # Otherwise, return to the account form
+    return render(request, "UWEFlix/CRUD/form.html", {"form": form})
+
+# Remove the account
+@login_required(login_url='login')
+@permitted(roles=["Cinema Manager", "Account Manager"])
+def removeAccount(request, account_id):
+    # Get the account with matching ID
+    account = ClubAccount.objects.get(id = account_id)
+    # If the form is being posted
+    if request.method == "POST":
+        # Delete the account
+        account.delete()
+        #messages.success(request, 'Booking ' + booking_id + ' deleted successfully!')
+        # Return to the booking management page
+        return redirect("account_management")
+    # Render the remove booking page
+    return render(request, "UWEFlix/CRUD/remove.html", {"object": account.id})

@@ -1,7 +1,32 @@
-{% extends "UWEFlix/placeholder.html" %}
-{% block title %}
-Account Management
-{% endblock %}
-{% block content %}
-<p>Modify an account...</p>
-{% endblock %}
+{% extends "UWEFlix/management.html" %}
+<!--Title of the page  -->
+{% block title %}Account Management{% endblock %}
+
+{% for alert in messages %}
+  <p class="flashMessage">{{ alert }}</p>
+{% endfor %}
+
+<!-- This should include the url to the form for adding a new item to the database -->
+{% block addLink %}{% url 'add_account' %}{% endblock %}
+{% block addMessage %}Make an Account{% endblock %}
+
+<!--These are the column names for the table -->
+{% block fieldOne %}<th>Account Name</th>{% endblock %}
+{% block fieldTwo %}<th>Club</th>{% endblock %}
+{% block fieldThree %}<th>Representative</th>{% endblock %}
+{% block fieldFour %}<th>Contact Email</th>{% endblock %}
+
+<!-- These are the records in our table pulled from the database -->
+{% block dbObjects %}
+{% for account in account_list %}
+  <tr>
+    <td>{{ account.account_title }}</td>
+    <td>{{ account.club.name }}</td>
+    <td>{{ booking.club.representative.username }}</td>
+    <td>{{ booking.club.email }}</td>
+    <td><a class="btn btn-sm btn-outline-info" href="{% url 'update_account' account.id %}">Update</a></td>
+    <td><a class="btn btn-sm btn-outline-danger" href="{% url 'remove_account' account.id %}">Delete</a></td>
+
+  </tr>
+{% endfor %}
+{% endblock %} 

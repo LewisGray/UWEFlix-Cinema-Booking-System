@@ -55,8 +55,6 @@
               <li class="nav-item">
                 <a class="nav-link" href="{% url 'login' %}">Login</a>
               </li>
-            {% endif %}
-            {% if not request.user|logged_in %}
               <li class="nav-item">
                 <a class="nav-link" href="{% url 'register' %}">Register</a>
               </li>
@@ -69,6 +67,7 @@
           {% if request.user|has_group:"Cinema Manager" or request.user|has_group:"Cinema Employee" %}
               <li class="nav-item">
                 <a class="nav-link" href="{% url 'film_management' %}">Films</a>
+              </li>
               <li class="nav-item">
                 <a class="nav-link" href="{% url 'booking_management' %}">Bookings</a>
               </li>
@@ -81,6 +80,11 @@
                 </li>
               {% endif %}
             {% endif %}
+            {% if request.user|has_group:"Cinema Manager" or request.user|has_group:"Account Manager" %}
+                <li class="nav-item">
+                  <a class="nav-link" href="{% url 'account_management' %}">Accounts</a>
+                </li>
+              {% endif %}
           </ul>
           <span class="navbar-text">
             {% if request.user|logged_in %}

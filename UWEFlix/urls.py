@@ -37,5 +37,9 @@ urlpatterns = [
     path("remove_user/<str:username>", views.removeUser, name="remove_user"),
     path("user_management/", views.user_management_view, name="user_management"),
     path("my_bookings/", views.user_bookings, name="user_bookings"),
+    path("add_account/", views.log_account, name="add_account"),
+    path("update_account/<str:account_id>", views.updateAccount, name="update_account"),
+    path("remove_account/<str:account_id>", views.removeAccount, name="remove_account"),
+    path("account_management/", views.account_management_view, name="account_management"),
     # path("movies/", views.movies, name="movies"), 
 ]
