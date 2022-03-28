@@ -1,28 +1,45 @@
-{% extends "UWEFlix/management.html" %}
-<!--Title of the page  -->
-{% block title %}My Bookings{% endblock %}
+{% extends "UWEFlix/placeholder.html" %}
+{% block content %}
+  <body>
+    <main role="main">
 
-<!--These are the column names for the table -->
-{% block fieldOne %}<th>Film</th>{% endblock %}
-{% block fieldTwo %}<th>Date</th>{% endblock %}
-{% block fieldThree %}<th>Time</th>{% endblock %}
-{% block fieldFour %}<th>Screen</th>{% endblock %}
-{% block fieldFive %}<th>Adults</th>{% endblock %}
-{% block fieldSix %}<th>Students</th>{% endblock %}
-{% block fieldSeven %}<th>Children</th>{% endblock %}
-
-<!-- These are the records in our table pulled from the database -->
-{% block dbObjects %}
-{% for booking in booking_list %}
-  <tr>
-    <td>{{ booking.showing.film.title }}</td>
-    <td>{{ booking.showing.date }}</td>
-    <td>{{ booking.showing.time }}</td>
-    <td>{{ booking.showing.screen }}</td>
-    <td>{{ booking.adult_tickets }}</td>
-    <td>{{ booking.student_tickets }}</td>
-    <td>{{ booking.child_tickets }}</td>
-    <td><a class="btn btn-sm btn-outline-info" href="{% url 'update_film' film.title %}">Request Cancellation</a></td>
-  </tr>
-{% endfor %}
-{% endblock %} 
+      <section class="jumbotron text-center">
+        <div class="container py-5">
+          <h1 class="jumbotron-heading">My Bookings&nbsp;&nbsp;</h1>
+        </div>
+        <div class="album py-5 bg-light">
+          <p class="border-middlePage">
+            <!-- <div class="card card-body"> -->
+              <table class="table table-sm table-hover">
+                <thead>
+                  <th>Film</th>
+                  <th>Date</th>
+                  <th>Time</th>
+                  <th>Screen</th>
+                  <th>Adults</th>
+                  <th>Students</th>
+                  <th>Children</th>
+                  <th>Cancel</th>
+              </thead>
+              <tbody>
+                {% for booking in booking_list %}
+                  <tr>
+                    <td>{{ booking.showing.film.title }}</td>
+                    <td>{{ booking.showing.date }}</td>
+                    <td>{{ booking.showing.time }}</td>
+                    <td>{{ booking.showing.screen }}</td>
+                    <td>{{ booking.adult_tickets }}</td>
+                    <td>{{ booking.student_tickets }}</td>
+                    <td>{{ booking.child_tickets }}</td>
+                    <td><a class="btn btn-sm btn-outline-info" href="{% url 'update_film' film.title %}">Request Cancellation</a></td>
+                  </tr>
+                {% endfor %}
+                </tbody>
+              </table>
+            <!-- </div>  -->
+        </div>
+      </section>
+      
+    </main>
+  </body>
+{% endblock %}

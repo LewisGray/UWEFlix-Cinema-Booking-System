@@ -150,9 +150,9 @@ def booking_management_view(request):
 # View to allow a user to check their bookings
 @login_required(login_url='login')
 def user_bookings(request):
-    #
-    booking_list = Booking.objects.all()
-    #
+    # Get all the associated bookings for the user
+    booking_list = Booking.objects.filter(customer=request.user)
+    # Render the bookings page
     return render(request, "UWEFlix/userBookings_manager.html", {'booking_list': booking_list})
 
 
