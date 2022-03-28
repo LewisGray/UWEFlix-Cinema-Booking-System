@@ -1,0 +1,27 @@
+{% extends "UWEFlix/management.html" %}
+<!--Title of the page  -->
+{% block title %}Screen{% endblock %}
+
+<!-- This should include the url to the form for adding a new item to the database -->
+{% block addLink %}{% url 'log_screens' %}{% endblock %}
+{% block addMessage %}Add a screen!{% endblock %}
+
+<!--These are the column names for the table -->
+{% block fieldOne %}<th>Capacity</th>{% endblock %}
+{% block fieldTwo %}<th>Number</th>{% endblock %}
+
+
+
+<!-- These are the records in our table pulled from the database -->
+{% block dbObjects %}
+{% for screen in screenList%}
+  <tr>
+    <td>{{screen.capacity}}</td>
+    <td>{{screen.number}}</td>
+
+    <td><a class="btn btn-sm btn-outline-info" href="{% url 'updateScreens' screen.id %}">Update</a></td>
+    <td><a class="btn btn-sm btn-outline-danger" href="{% url 'removeScreens' screen.id %}">Delete</a></td>
+
+  </tr>
+{% endfor %}
+{% endblock %}

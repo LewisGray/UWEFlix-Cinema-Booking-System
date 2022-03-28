@@ -10,6 +10,8 @@ class Club(models.Model):
     landline = models.CharField(max_length=11)
     mobile = models.CharField(max_length=11)
     email = models.EmailField(max_length=30)
+    def __str__(self):
+        return str(self.name)
     
 # Club models
 
@@ -18,15 +20,15 @@ class ClubAccount(models.Model):
     card_number = models.IntegerField()
     expiry_date = models.DateField()
     club = models.ForeignKey(Club, on_delete=models.CASCADE)
+    
 
 # Cinema models
-class Screen(models.Model):
-    number = models.IntegerField()
+class Screens(models.Model):
+    number = models.IntegerField() 
     capacity = models.IntegerField()
+    def __str__(self):
+        return str(self.number)
 
-class Cinema(models.Model):
-    name = models.CharField(max_length=300)
-    screens = models.ForeignKey(Screen, on_delete=models.PROTECT)
 
 class Film(models.Model):
     title = models.CharField(max_length=300)
@@ -37,12 +39,15 @@ class Film(models.Model):
     image_URL = models.URLField()
     #trailer_url = models.URLField()
     upload_date = models.DateTimeField("date logged")
+    def __str__(self):
+        return self.title
+        
 
 class Showing(models.Model):
     date = models.DateField()
     time = models.TimeField()
     film = models.ForeignKey(Film, on_delete=models.PROTECT)
-    screen = models.ForeignKey(Screen, on_delete=models.PROTECT)
+    screen = models.ForeignKey(Screens, on_delete=models.PROTECT)
     taken_tickets = models.IntegerField()
 
 # Customer models

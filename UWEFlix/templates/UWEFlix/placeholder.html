@@ -66,18 +66,30 @@
               <a class="nav-link" href="{% url 'user_bookings' %}">My Bookings</a>
             </li>
           {% endif %}
+		  {% if request.user|has_group:"Cinema Manager" or request.user|has_group:"Account Manager" %}
+			<li class="nav-item">
+                <a class="nav-link" href="{% url 'account_management' %}">Accounts</a>
+              <li class="nav-item">
+			{% endif %}
           {% if request.user|has_group:"Cinema Manager" or request.user|has_group:"Cinema Employee" %}
               <li class="nav-item">
                 <a class="nav-link" href="{% url 'film_management' %}">Films</a>
               <li class="nav-item">
                 <a class="nav-link" href="{% url 'booking_management' %}">Bookings</a>
               </li>
-              {% if request.user|has_group:"Cinema Manager" %}
+              {% if request.user|has_group:"Cinema Manager"  %}
                 <li class="nav-item">
                   <a class="nav-link" href="{% url 'club_management' %}">Clubs</a>
                 </li>
                 <li class="nav-item">
                   <a class="nav-link" href="{% url 'user_management' %}">Users</a>
+                </li>
+				   <li class="nav-item">
+                  <a class="nav-link" href="{% url 'screens' %}">Screen</a>
+                </li>
+				 </li>
+				   <li class="nav-item">
+                  <a class="nav-link" href="{% url 'showing' %}">Showing</a>
                 </li>
               {% endif %}
             {% endif %}

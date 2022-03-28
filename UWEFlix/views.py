@@ -5,7 +5,7 @@ from datetime import datetime
 from django.shortcuts import redirect
 from django.views.generic import ListView
 from UWEFlix.email import sendEmail
-from UWEFlix.models import ClubAccount, Film, Booking, Showing
+from UWEFlix.models import ClubAccount, Film, Booking, Showing, Screens
 from UWEFlix.forms import *
 from math import *
 from django.contrib.auth import *
@@ -517,10 +517,8 @@ def log_account(request):
             #messages.success(request, 'Booking ' + booking.id + ' created successfully!')
             # Return the user to the homepage
             return redirect("account_management")
-    # Otherwise
-    else:
-        # Take the user to the film creator page
-        return render(request, "UWEFlix/CRUD/form.html", {"form": form})
+   
+    return render(request, "UWEFlix/CRUD/form.html", {"form": form})
 
 # Update an account
 @login_required(login_url='login')
@@ -560,3 +558,107 @@ def removeAccount(request, account_id):
         return redirect("account_management")
     # Render the remove booking page
     return render(request, "UWEFlix/CRUD/remove.html", {"object": account.id})
+    
+    
+    #Showings 
+
+def showing_view(request):
+    showingList = Showing.objects.all()
+    return render(request, "UWEFlix/showings.html", {'showingList':showingList})
+    
+@login_required(login_url='login')
+@permitted(roles=["Cinema Manager", "Cinema Employee"])
+# Function to allow the addition of showings to the database
+def log_showing(request):
+    # Define the form
+    form = LogShowingForm(request.POST or None)
+    # If posting
+    if request.method == "POST":
+        # If the showings is valid
+        if form.is_valid():
+            # Save the film details
+            showing = form.save(commit=False)
+            showing.upload_date = datetime.now()
+            showing.save()
+            # Return the user to the homepage
+            return redirect("showing")
+    return render(request, "UWEFlix/CRUD/form.html", {"form": form})
+
+#Update showings in the database
+@login_required(login_url='login')
+@permitted(roles=["Cinema Manager", "Cinema Employee"])
+def updateShowings(request, object):
+    showingName = Showing.objects.get(id = object )
+    form = LogShowingForm(instance=showingName)
+    if request.method == "POST":
+        # If the film is valid
+        form = LogShowingForm(request.POST, instance = showingName)
+        if form.is_valid():
+            # Save the film details
+            showingName = form.save(commit=False)
+            showingName.save()
+            return redirect("showing")
+    return render(request, "UWEFlix/CRUD/form.html",{"form": form})
+
+@login_required(login_url='login')
+@permitted(roles=["Cinema Manager", "Cinema Employee"])
+def removeShowings(request,object):
+    showingName = Showing.objects.get(id = object)
+    if request.method == "POST":
+        showingName.delete()
+        return redirect("showing")
+    return render(request, "UWEFlix/CRUD/remove.html",{"object": showingName.id})
+
+#Screens 
+
+def screen_view(request):
+    screenList = Screens.objects.all()
+    return render(request, "UWEFlix/screens.html", {'screenList':screenList})
+    
+@login_required(login_url='login')
+@permitted(roles=["Cinema Manager", "Cinema Employee"])
+# Function to allow the addition of screens to the database
+def log_screens(request):
+    # Define the form
+    form = LogScreenForm(request.POST or None)
+    # If posting
+    if request.method == "POST":
+        # If the screens is valid
+        if form.is_valid():
+            # Save the film details
+            screens = form.save(commit=False)
+            screens.save()
+            # Return the user to the homepage
+            return redirect("screens")
+    # Otherwise
+    else:
+        # Take the user to the film creator page
+        return render(request, "UWEFlix/CRUD/form.html", {"form": form})
+
+#Update screens in the database
+@login_required(login_url='login')
+@permitted(roles=["Cinema Manager", "Cinema Employee"])
+def updateScreens(request, object):
+    screenName = Screens.objects.get(id = object )
+    
+    form = LogScreenForm(instance=screenName)
+  
+    if request.method == "POST":
+        # If the film is valid
+        form = LogScreenForm(request.POST, instance = screenName)
+        if form.is_valid():
+           
+            # Save the film details
+            screenName = form.save(commit=False)
+            screenName.save()
+            return redirect("screens")
+    return render(request, "UWEFlix/CRUD/form.html",{"form": form})
+
+@login_required(login_url='login')
+@permitted(roles=["Cinema Manager", "Cinema Employee"])
+def removeScreens(request,object):
+    screenName = Screens.objects.get(id = object)
+    if request.method == "POST":
+        screenName.delete()
+        return redirect("screens")
+    return render(request, "UWEFlix/CRUD/remove.html",{"object": screenName.id})

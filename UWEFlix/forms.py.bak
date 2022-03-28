@@ -1,0 +1,97 @@
+from dataclasses import fields
+from django import forms
+from UWEFlix.models import ClubAccount, Film,Club,Booking
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.models import User
+
+# A form to add a film to the database
+class LogFilmForm(forms.ModelForm):
+    # Metadata class
+    class Meta:
+        # Set the model type to film
+        model = Film
+        # Define the fields to be included in the film
+        fields = ("title", "short_description", "duration", "image_URL")
+
+# A form to add Club Details to the database
+class AddClubForm(forms.ModelForm):
+    # Metadata class
+    class Meta:
+        # Set the model type to film
+        model = Club
+        # Define the fields to be included in the film
+        fields = ("name", "representative", "address", "landline", "mobile", "email")
+        
+# A form to add a showings to the database
+class LogShowingForm(forms.ModelForm):
+    # Metadata class
+    class Meta:
+        # Set the model type to film
+        model = Showing
+        # Define the fields to be included in the film
+        fields = ('date', 'time', 'film', 'taken_tickets', 'screen')
+        
+# A form to add screen to the database
+class LogScreenForm(forms.ModelForm):
+    # Metadata class
+    class Meta:
+        # Set the model type to film
+        model = Screens
+        # Define the fields to be included in the film
+        fields = ('capacity', 'number')
+
+# A form to add a user to the database
+class LogUserForm(forms.ModelForm):
+    # Metadata class
+    class Meta:
+        # Set the model type to film
+        model = User
+        # Define the fields to be included in the film
+        fields = ("username", "email")
+
+# A form to add a user to the database
+class LogBookingForm(forms.ModelForm):
+    # Metadata class
+    class Meta:
+        # Set the model type to film
+        model = Booking
+        # Define the fields to be included in the film
+        fields = ('customer', 'showing', 'adult_tickets', 'student_tickets', 'child_tickets')
+
+# A form to add a user to the database
+class LogAccountForm(forms.ModelForm):
+    # Metadata class
+    class Meta:
+        # Set the model type to film
+        model = ClubAccount
+        # Define the fields to be included in the film
+        fields = ('account_title', 'card_number', 'expiry_date', 'club')
+
+# A form to create a new user
+class CreateUserForm(UserCreationForm):
+    # metadata
+    class Meta:
+        # Using User models
+        model = User
+        # Get the username, email, password and checking password
+        fields = ['username', 'email', 'password1', 'password2']
+
+# A form to login the user
+class LoginUserForm(forms.ModelForm):
+    # Metadata class
+    class Meta:
+        # Using the User models
+        model = User
+        # Get the username and password
+        fields = ['username', 'password']
+        # Set the password as a password input to hide the text
+        widgets = {'password': forms.PasswordInput()}
+
+#
+class UpdateAccountForm(forms.ModelForm):
+    # metadata
+    class Meta:
+        # Using User models
+        model = User
+        # Get the username, email, password and checking password
+        fields = ['username', 'email']
