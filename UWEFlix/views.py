@@ -15,6 +15,7 @@ from django.contrib import messages
 from UWEFlix.decorators import *
 from email import *
 from django.contrib.auth.forms import PasswordChangeForm
+from django.http import HttpResponseRedirect
 
 
 # Class to provide film information for the home page
@@ -662,3 +663,55 @@ def removeScreens(request,object):
         screenName.delete()
         return redirect("screens")
     return render(request, "UWEFlix/CRUD/remove.html",{"object": screenName.id})
+
+
+# Book a film
+@login_required(login_url='login')
+def bookFilm(request, title):
+    # Get the film object
+    film_object = Film.objects.get(title = title)
+    # Try
+    try:
+        # Get the showing list
+        showing_list = Showing.objects.filter(film = film_object)
+    # If there are no showings
+    except Showing.DoesNotExist:
+        # Return home
+        return redirect('home')
+    # Otherwise render the userBookFilm, passing in the film title
+    return render(request, "UWEFlix/userBookFilm_manager.html", {'showing_list':showing_list, 'filmTitle': title})
+
+
+# Log an account
+@login_required(login_url='login')
+def bookTickets(request, showing_id):
+    # Get the account with matching ID
+    showing = Showing.objects.get(id = showing_id)
+    # Define the form
+    form = BookTicketsForm(request.POST or None)
+    # If posting
+    if request.method == "POST":
+        # If the account is valid
+        if form.is_valid():
+            # Save the account details
+            booking = form.save(commit=False)
+            booking.showing = showing
+            booking.customer = request.user
+            # gut the total number of tickets
+            ticket_number = int(request.POST.get('adult_tickets')) + int(request.POST.get('student_tickets') + request.POST.get('child_tickets'))
+            #
+            if ticket_number > showing.screen.capacity - showing.taken_tickets:
+                #
+                return HttpResponseRedirect(request.path_info)
+            # Increase the ticket number by the number of tickets booked
+            showing.taken_tickets += ticket_number
+            # Save the models
+            booking.save()
+            showing.save()
+            #messages.success(request, 'Booking ' + booking.id + ' created successfully!')
+            # Return the user to the homepage
+            return redirect("home")
+    # Otherwise
+    else:
+        # Take the user to the film creator page
+        return render(request, "UWEFlix/CRUD/form.html", {"form": form})

@@ -61,5 +61,7 @@ urlpatterns = [
     path("updateShowing/<str:object>", views.updateShowings, name="updateShowings"), 
     path("removeShowings/<str:object>", views.removeShowings, name="removeShowings"), 
     
-
+    # Booking urls
+    path("book_film/<str:title>", views.bookFilm, name="book_film"),
+    path("book_ticket/<str:showing_id>", views.bookTickets, name="book_ticket"),
 ]
