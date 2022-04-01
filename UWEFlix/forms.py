@@ -65,7 +65,7 @@ class LogAccountForm(forms.ModelForm):
         # Set the model type to film
         model = ClubAccount
         # Define the fields to be included in the film
-        fields = ('account_title', 'card_number', 'expiry_date', 'club')
+        fields = ('account_title', 'card_number', 'expiry_date', 'club','discountRate')
 
 # A form to create a new user
 class CreateUserForm(UserCreationForm):

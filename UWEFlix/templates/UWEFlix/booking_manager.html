@@ -18,6 +18,7 @@
 {% block fieldFive %}<th>Adults</th>{% endblock %}
 {% block fieldSix %}<th>Students</th>{% endblock %}
 {% block fieldSeven %}<th>Children</th>{% endblock %}
+{% block fieldEight %}<th>Cost</th>{% endblock %}
 
 <!-- These are the records in our table pulled from the database -->
 {% block dbObjects %}
@@ -30,6 +31,7 @@
     <td>{{ booking.adult_tickets }}</td>
     <td>{{ booking.student_tickets }}</td>
     <td>{{ booking.child_tickets }}</td>
+    <td>{{ booking.cost }}</td>
     <td><a class="btn btn-sm btn-outline-info" href="{% url 'update_booking' booking.id %}">Update</a></td>
     <td><a class="btn btn-sm btn-outline-danger" href="{% url 'remove_booking' booking.id %}">Delete</a></td>
 

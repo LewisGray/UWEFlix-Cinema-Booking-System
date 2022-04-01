@@ -5,7 +5,7 @@ from datetime import datetime
 from django.shortcuts import redirect
 from django.views.generic import ListView
 from UWEFlix.email import sendEmail
-from UWEFlix.models import ClubAccount, Film, Booking, Showing, Screens
+from UWEFlix.models import ClubAccount, Film, Booking, Showing, Screens, Ticket
 from UWEFlix.forms import *
 from math import *
 from django.contrib.auth import *
@@ -296,6 +296,14 @@ def log_booking(request):
             # Save the booking details
             booking = form.save(commit=False)
             booking.upload_date = datetime.now()
+            adultNum = int(request.POST.get('adult_tickets'))
+            studentNum =int(request.POST.get('student_tickets'))
+            childNum =int(request.POST.get('child_tickets'))
+            adultTicket = Ticket.objects.get(ticketType = 'adult_ticket')
+            studentTicket = Ticket.objects.get(ticketType = 'student_ticket')
+            childTicket = Ticket.objects.get(ticketType = 'child_ticket')
+            totalPrice = (adultTicket.ticketPrice*adultNum)+(studentTicket.ticketPrice*studentNum)+(childTicket.ticketPrice*childNum)
+            booking.cost = totalPrice
             booking.save()
             #messages.success(request, 'Booking ' + booking.id + ' created successfully!')
             # Return the user to the homepage
@@ -321,6 +329,14 @@ def updateBooking(request, booking_id):
         if form.is_valid():
             # Save the film details
             booking = form.save(commit=False)
+            adultNum = int(request.POST.get('adult_tickets'))
+            studentNum =int(request.POST.get('student_tickets'))
+            childNum =int(request.POST.get('child_tickets'))
+            adultTicket = Ticket.objects.get(ticketType = 'adult_ticket')
+            studentTicket = Ticket.objects.get(ticketType = 'student_ticket')
+            childTicket = Ticket.objects.get(ticketType = 'child_ticket')
+            totalPrice = (adultTicket.ticketPrice*adultNum)+(studentTicket.ticketPrice*studentNum)+(childTicket.ticketPrice*childNum)
+            booking.cost = totalPrice
             booking.save()
             #messages.success(request, 'Details for ' + booking_id + ' updated successfully!')
             # Return to the booking management
@@ -333,7 +349,7 @@ def updateBooking(request, booking_id):
 @permitted(roles=["Cinema Manager", "Cinema Employee"])
 def removeBooking(request, booking_id):
     # Get the booking with matching ID
-    booking = Film.objects.get(id = booking_id)
+    booking = Booking.objects.get(id = booking_id)
     # If the form is being posted
     if request.method == "POST":
         # Delete the booking
@@ -682,10 +698,10 @@ def bookFilm(request, title):
     return render(request, "UWEFlix/userBookFilm_manager.html", {'showing_list':showing_list, 'filmTitle': title})
 
 
-# Log an account
+#Book tickets
 @login_required(login_url='login')
 def bookTickets(request, showing_id):
-    # Get the account with matching ID
+    # Get the showing with matching ID
     showing = Showing.objects.get(id = showing_id)
     # Define the form
     form = BookTicketsForm(request.POST or None)
@@ -693,25 +709,37 @@ def bookTickets(request, showing_id):
     if request.method == "POST":
         # If the account is valid
         if form.is_valid():
-            # Save the account details
+            # Save the details
             booking = form.save(commit=False)
             booking.showing = showing
             booking.customer = request.user
-            # gut the total number of tickets
-            ticket_number = int(request.POST.get('adult_tickets')) + int(request.POST.get('student_tickets') + request.POST.get('child_tickets'))
+            # get the number of each type of ticket
+            adultNum = int(request.POST.get('adult_tickets'))
+            studentNum =int(request.POST.get('student_tickets'))
+            childNum =int(request.POST.get('child_tickets'))
+            adultTicket = Ticket.objects.get(ticketType = 'adult_ticket')
+            studentTicket = Ticket.objects.get(ticketType = 'student_ticket')
+            childTicket = Ticket.objects.get(ticketType = 'child_ticket')
+            totalPrice = (adultTicket.ticketPrice*adultNum)+(studentTicket.ticketPrice*studentNum)+(childTicket.ticketPrice*childNum)
+            booking.cost = totalPrice
+            ticket_number = booking.student_tickets +booking.adult_tickets+booking.child_tickets
             #
-            if ticket_number > showing.screen.capacity - showing.taken_tickets:
+            if ticket_number > booking.showing.screen.capacity - booking.showing.taken_tickets:
                 #
                 return HttpResponseRedirect(request.path_info)
             # Increase the ticket number by the number of tickets booked
-            showing.taken_tickets += ticket_number
+            booking.showing.taken_tickets += ticket_number
+
             # Save the models
             booking.save()
-            showing.save()
+            booking.showing.save()
             #messages.success(request, 'Booking ' + booking.id + ' created successfully!')
             # Return the user to the homepage
             return redirect("home")
-    # Otherwise
     else:
         # Take the user to the film creator page
         return render(request, "UWEFlix/CRUD/form.html", {"form": form})
+
+
+            
+

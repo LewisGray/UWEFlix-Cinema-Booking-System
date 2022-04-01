@@ -19,7 +19,9 @@ class ClubAccount(models.Model):
     account_title = models.CharField(max_length=300)
     card_number = models.IntegerField()
     expiry_date = models.DateField()
-    club = models.ForeignKey(Club, on_delete=models.CASCADE)
+    club = models.ForeignKey(Club, on_delete=models.PROTECT)
+    discountRate = models.FloatField(default = 0.00)
+    balance = models.FloatField(default = 0.00)
     
 
 # Cinema models
@@ -49,6 +51,8 @@ class Showing(models.Model):
     film = models.ForeignKey(Film, on_delete=models.PROTECT)
     screen = models.ForeignKey(Screens, on_delete=models.PROTECT)
     taken_tickets = models.IntegerField()
+    def __str__(self):
+        return str(self.film)+" "+str(self.date)+" "+str(self.time)
 
 # Customer models
 
@@ -64,3 +68,8 @@ class Booking(models.Model):
     student_tickets = models.IntegerField()
     child_tickets = models.IntegerField()
     adult_tickets = models.IntegerField()
+    cost = models.FloatField()
+
+class Ticket(models.Model):
+    ticketType = models.CharField(primary_key = True,max_length=20)
+    ticketPrice = models.FloatField()
