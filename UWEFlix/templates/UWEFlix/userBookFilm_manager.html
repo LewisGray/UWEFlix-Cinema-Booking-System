@@ -5,7 +5,7 @@
 
       <section class="jumbotron text-center">
         <div class="container py-5">
-          <h1 class="jumbotron-heading">My Bookings&nbsp;&nbsp;</h1>
+          <h1 class="jumbotron-heading">Showings for {{ filmTitle }}&nbsp;&nbsp;</h1>
         </div>
         <div class="album py-5 bg-light">
           <p class="border-middlePage">
@@ -16,22 +16,16 @@
                   <th>Date</th>
                   <th>Time</th>
                   <th>Screen</th>
-                  <th>Adults</th>
-                  <th>Students</th>
-                  <th>Children</th>
-                  <th>Cancel</th>
+                  <th>Book</th>
               </thead>
               <tbody>
-                {% for booking in booking_list %}
+                {% for showing in showing_list %}
                   <tr>
-                    <td>{{ booking.showing.film.title }}</td>
-                    <td>{{ booking.showing.date }}</td>
-                    <td>{{ booking.showing.time }}</td>
-                    <td>{{ booking.showing.screen }}</td>
-                    <td>{{ booking.adult_tickets }}</td>
-                    <td>{{ booking.student_tickets }}</td>
-                    <td>{{ booking.child_tickets }}</td>
-                    <td><a class="btn btn-sm btn-outline-info" href="{{ home }}">Request Cancellation</a></td>
+                    <td>{{ showing.film.title }}</td>
+                    <td>{{ showing.date }}</td>
+                    <td>{{ showing.time }}</td>
+                    <td>{{ showing.screen }}</td>
+                    <td><a class="btn btn-sm btn-outline-info" href="{% url 'book_ticket' showing.id %}">Book!</a></td>
                   </tr>
                 {% endfor %}
                 </tbody>

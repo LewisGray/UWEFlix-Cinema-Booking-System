@@ -95,3 +95,13 @@ class UpdateAccountForm(forms.ModelForm):
         model = User
         # Get the username, email, password and checking password
         fields = ['username', 'email']
+
+
+# Form to book tickets
+class BookTicketsForm(forms.ModelForm):
+    # metadata
+    class Meta:
+        # Using Booking models
+        model = Booking
+        # Get the ticket numbers
+        fields = ['adult_tickets', 'student_tickets', 'child_tickets']
