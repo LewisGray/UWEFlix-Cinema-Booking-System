@@ -5,7 +5,7 @@ from datetime import datetime
 from django.shortcuts import redirect
 from django.views.generic import ListView
 from UWEFlix.email import sendEmail
-from UWEFlix.models import ClubAccount, Film, Booking, Showing, Screens, Ticket
+from UWEFlix.models import ClubAccount, Film, Booking, Showing, Screens, Ticket, tempBooking
 from UWEFlix.forms import *
 from math import *
 from django.contrib.auth import *
@@ -16,6 +16,8 @@ from UWEFlix.decorators import *
 from email import *
 from django.contrib.auth.forms import PasswordChangeForm
 from django.http import HttpResponseRedirect
+from django.http import JsonResponse
+import json
 
 
 # Class to provide film information for the home page
@@ -717,29 +719,59 @@ def bookTickets(request, showing_id):
             adultNum = int(request.POST.get('adult_tickets'))
             studentNum =int(request.POST.get('student_tickets'))
             childNum =int(request.POST.get('child_tickets'))
+            ticket_number = adultNum +studentNum+childNum
+            #
+            if ticket_number > booking.showing.screen.capacity - booking.showing.taken_tickets:
+                #
+                return HttpResponseRedirect(request.path_info)
+            #Calculate cost and proceed to checkout
             adultTicket = Ticket.objects.get(ticketType = 'adult_ticket')
             studentTicket = Ticket.objects.get(ticketType = 'student_ticket')
             childTicket = Ticket.objects.get(ticketType = 'child_ticket')
             totalPrice = (adultTicket.ticketPrice*adultNum)+(studentTicket.ticketPrice*studentNum)+(childTicket.ticketPrice*childNum)
             booking.cost = totalPrice
-            ticket_number = booking.student_tickets +booking.adult_tickets+booking.child_tickets
-            #
-            if ticket_number > booking.showing.screen.capacity - booking.showing.taken_tickets:
-                #
-                return HttpResponseRedirect(request.path_info)
             # Increase the ticket number by the number of tickets booked
             booking.showing.taken_tickets += ticket_number
-
-            # Save the models
             booking.save()
-            booking.showing.save()
+            #booking.showing.save()
+            return render(request, "UWEFlix/checkout.html", {"booking": booking})
+            # Save the models
+            
             #messages.success(request, 'Booking ' + booking.id + ' created successfully!')
             # Return the user to the homepage
-            return redirect("home")
+            
     else:
         # Take the user to the film creator page
-        return render(request, "UWEFlix/CRUD/form.html", {"form": form})
+        return render(request, "UWEFlix/CRUD/ticket_form.html", {"form": form})
 
 
             
 
+
+
+#complete
+@login_required(login_url='login')
+def booking_complete(request):
+    if request.method == "POST":
+        body = json.loads(request.body)
+        print('BODY:',body)
+        booking = tempBooking.objects.get(id = body['bookingID'])
+        booking.showing.taken_tickets += (booking.student_tickets+booking.child_tickets+booking.adult_tickets)
+        confirmedBooking = Booking(
+            customer = booking.customer,
+            showing = booking.showing,
+            student_tickets = booking.student_tickets,
+            child_tickets = booking.child_tickets,
+            adult_tickets = booking.adult_tickets,
+            cost = booking.cost )
+        booking.paid = True
+        booking.save()
+        booking.showing.save()
+        confirmedBooking.save()
+        print("KLOL")
+    return JsonResponse('Payment submitted..', safe=False)
+        
+#complete
+@login_required(login_url='login')
+def booking_success(request):
+    return render(request, "UWEFlix/complete_booking.html")

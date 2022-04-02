@@ -64,4 +64,9 @@ urlpatterns = [
     # Booking urls
     path("book_film/<str:title>", views.bookFilm, name="book_film"),
     path("book_ticket/<str:showing_id>", views.bookTickets, name="book_ticket"),
+
+    #Checkout url
+    path("bookingComplete/", views.booking_complete, name="complete"),
+    path("booking_success/", views.booking_success, name="success"),
+
 ]

@@ -1,0 +1,99 @@
+{% extends "UWEFlix/placeholder.html" %}
+{% block content %}
+
+<section class="jumbotron text-center"> 
+  <body>
+    <h1>Booking Summary</h1>
+    <p>
+    {{ booking.customer.username }}
+    {{ booking.showing.film.title }}
+    {{ booking.showing.date }}
+    {{ booking.showing.time }}
+    {{ booking.adult_tickets }}
+    {{ booking.student_tickets }}
+    {{ booking.child_tickets }}
+    {{ booking.cost }}
+    </p>
+    <!-- Replace "test" with your own sandbox Business account app client ID -->
+    <script src="https://www.paypal.com/sdk/js?client-id=ASlNnsmhBGyCb1XeV7rer61YqmRowT1z0GH7J7cD7z4YA3K-SXR5dbquaDWOEi6SNOQqjM5VKtEq3Z84&currency=GBP"></script>
+    <!-- Set up a container element for the button -->
+    <div id="paypal-button-container"></div>
+    <script>
+
+      function getCookie(name) {
+          let cookieValue = null;
+          if (document.cookie && document.cookie !== '') {
+              const cookies = document.cookie.split(';');
+              for (let i = 0; i < cookies.length; i++) {
+                  const cookie = cookies[i].trim();
+                  // Does this cookie string begin with the name we want?
+                  if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                      cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                      break;
+                  }
+              }
+          }
+          return cookieValue;
+      }
+      const csrftoken = getCookie('csrftoken');
+
+      
+      
+      
+
+      paypal.Buttons({
+        // Sets up the transaction when a payment button is clicked
+        createOrder: (data, actions) => {
+          return actions.order.create({
+            purchase_units: [{
+              amount: {
+                value: '{{ booking.cost }}' // Can also reference a variable or function
+              }
+            }]
+          });
+        },
+        // Finalize the transaction after payer approval
+        onApprove: (data, actions) => {
+          return actions.order.capture().then(function(orderData) {
+            // Successful capture! For dev/demo purposes:
+            console.log('Capture result', orderData, JSON.stringify(orderData, null, 2));
+            const transaction = orderData.purchase_units[0].payments.captures[0];
+            alert(`Transaction ${transaction.status}: ${transaction.id}\n\nSee console for all available details`);
+            completeBooking()
+
+            // When ready to go live, remove the alert and show a success message within this page. For example:
+          
+          });
+        }
+      }).render('#paypal-button-container');
+
+      function completeBooking(){
+        var url = "{% url 'complete' %}"
+        var bookingID ="{{booking.id}}"
+        fetch(url,{
+          method: 'POST',
+          headers:{
+            'Content-Type':'application/json',
+            'X-CSRFToken':csrftoken,
+          },
+          body:JSON.stringify({'bookingID':bookingID})
+        })
+        .then((response) => response.json())
+	    	.then((data) => {
+				console.log('Success:', data);
+				alert('Transaction completed');  
+
+
+				window.location.href = "{% url 'success' %}"
+
+				})
+      }
+
+
+    </script>
+  </body>
+</section>
+
+
+
+{% endblock %}
