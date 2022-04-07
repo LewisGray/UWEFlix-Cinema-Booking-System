@@ -1,11 +1,12 @@
 from urllib import response
+from django.dispatch import receiver
 from django.http import HttpResponse
 from django.shortcuts import render
 from datetime import datetime
 from django.shortcuts import redirect
 from django.views.generic import ListView
 from UWEFlix.email import sendEmail
-from UWEFlix.models import ClubAccount, Film, Booking, Showing, Screens, Ticket, tempBooking
+from UWEFlix.models import ClubAccount, Film, Booking, Notification, Showing, Screens, Ticket, tempBooking
 from UWEFlix.forms import *
 from math import *
 from django.contrib.auth import *
@@ -18,6 +19,7 @@ from django.contrib.auth.forms import PasswordChangeForm
 from django.http import HttpResponseRedirect
 from django.http import JsonResponse
 import json
+from UWEFlix.notifications import getNotifications, deleteNotification, sendNotificationToGroup, sendNotificationToUser
 from UWEFlix.render import dynamicRender
 
 # Overwrite the get context data function
@@ -349,8 +351,12 @@ def removeBooking(request, booking_id):
     booking = Booking.objects.get(id = booking_id)
     # If the form is being posted
     if request.method == "POST":
+        # Notify the customer their film has been cancelled
+        sendNotificationToUser(request.user, booking.customer, f"Your booking for {booking.showing.film.title} at {booking.showing.date} has been cancelled.")
         # Delete the booking
         booking.delete()
+        # Delete any notifications for the booking
+        deleteNotification('remove_booking', str(booking_id))
         #messages.success(request, 'Booking ' + booking_id + ' deleted successfully!')
         # Return to the booking management page
         return redirect("booking_management")
@@ -739,11 +745,6 @@ def bookTickets(request, showing_id):
         # Take the user to the film creator page
         return dynamicRender(request, "UWEFlix/CRUD/ticket_form.html", {"form": form})
 
-
-            
-
-
-
 #complete
 @login_required(login_url='login')
 def booking_complete(request):
@@ -770,3 +771,59 @@ def booking_complete(request):
 @login_required(login_url='login')
 def booking_success(request):
     return dynamicRender(request, "UWEFlix/complete_booking.html")
+
+# View a user's notifications
+@login_required(login_url='login')
+def viewNotifications(request):
+    # Get the notifications list for the user
+    notification_list = getNotifications(request.user)
+    # If posting
+    if request.method == "POST":
+        # For each notification
+        for notification in notification_list:
+            # If it's ID is in the post (it has been selected to be deleted)
+            if str(notification.id) in request.POST:
+                # Delete the notification
+                notification.delete()
+                # Break the loop
+                break
+        # Return to the notifications page
+        return redirect("notifications")
+    # Get all the notifications for the user
+    notifications = Notification.objects.filter(receiver = request.user).order_by('sent_date').reverse()
+    # For each notification
+    for notification in notifications:
+        # If it's unseen
+        if notification.seen == 0:
+            # mark it as seen
+            notification.seen = 1
+            # Save the notification
+            notification.save()
+        # If it was seen last time
+        elif notification.seen == 1:
+            # Set the notification to seen
+            notification.seen = 2
+            # Save the notification
+            notification.save()
+    # Render the notification page using the notification list
+    return dynamicRender(request, "UWEFlix/notification_manager.html", {'notification_list': notification_list})
+
+# View a user's bookings
+@login_required(login_url='login')
+def user_bookings(request):
+    # Get the user's bookings
+    booking_list = Booking.objects.filter(customer = request.user)
+    # If posting
+    if request.method == "POST":
+        # For each booking
+        for booking in booking_list:
+            # If it's ID is in the post (it has been selected to be deleted)
+            if str(booking.id) in request.POST:
+                # Send a notification to the cinema manager
+                sendNotificationToGroup(request.user, "Cinema Manager", f"Request from {request.user.username} to delete booking {booking.id}", 'remove_booking', str(booking.id))
+                # Break the loop
+                break
+        # Return to the bookings page
+        return redirect("user_bookings")
+    # Render the notification page using the notification list
+    return dynamicRender(request, "UWEFlix/userBookings_manager.html", {'booking_list': booking_list})

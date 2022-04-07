@@ -62,4 +62,6 @@ urlpatterns = [
     path("bookingComplete/", views.booking_complete, name="complete"),
     path("booking_success/", views.booking_success, name="success"),
 
+    # Notifications
+    path("notifications/", views.viewNotifications, name="notifications")
 ]

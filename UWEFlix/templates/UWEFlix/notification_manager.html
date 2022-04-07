@@ -1,0 +1,44 @@
+{% extends "UWEFlix/placeholder.html" %}
+{% block content %}
+  <body>
+    <main role="main">
+
+      <section class="jumbotron text-center">
+        <div class="container py-5">
+          <h1 class="jumbotron-heading">My Bookings&nbsp;&nbsp;</h1>
+        </div>
+        <div class="album py-5 bg-light">
+          <p class="border-middlePage">
+            <!-- <div class="card card-body"> -->
+              <form method = "POST">
+                {% csrf_token %}
+                <table class="table table-sm table-hover">
+                  <thead>
+                    <th>Date</th>
+                    <th>Time</th>
+                    <th>Message</th>
+                    <th>Delete</th>
+                </thead>
+                <tbody>
+                  {% for notification in notification_list %}
+                      <tr>
+                        <td>{{ notification.sent_date | date:'d M Y' }}</td>
+                        <td>{{ notification.sent_date | date:'H:i:s' }}</td>
+                        {% if notification.href %}
+                          <td><a class="notification{{notification.seen}}" href="{% url notification.href notification.href_data %}">{{ notification.message }}</a></td>
+                        {% else %}
+                          <td>{{ notification.message }}</td>
+                        {% endif %}
+                        <td><button type="submit" class="save btn btn-default" name="{{ notification.id }}">Delete</button></td>
+                      </tr>
+                  {% endfor %}
+                  </tbody>
+                </table>
+              </form>
+            <!-- </div>  -->
+        </div>
+      </section>
+      
+    </main>
+  </body>
+{% endblock %}

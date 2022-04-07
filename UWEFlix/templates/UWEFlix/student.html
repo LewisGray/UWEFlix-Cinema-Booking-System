@@ -60,9 +60,11 @@ UWEFlix movies
 
                         <div class="d-flex justify-content-between align-items-center">
                             <div class="btn-group">
-                                <button type="button" class="btn btn-sm btn-outline-secondary">
-                                    <a href="{% url 'book_film' movie.title %}">Book</a>
-                                </button>
+                                <a href="{% url 'book_film' movie.title %}">
+                                    <button type="button" class="btn btn-sm btn-outline-secondary">
+                                        Book
+                                    </button>
+                                </a>
                             </div>
                             <small class="text-muted"> {{ movie.duration }} minutes</small>
                         </div>
@@ -71,7 +73,6 @@ UWEFlix movies
             </div>
             {% endfor %}
         </div>
-
         {% endfor %}
         {% else %}
         <p class="text-center">No movies currently available.</p>
