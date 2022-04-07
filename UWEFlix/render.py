@@ -45,7 +45,7 @@ def getGroup(user):
     return user.groups.all()[0].name
 
 # Render the page with the user's navigation items
-def groupSpecificRender(request, page, context = {}):
+def dynamicRender(request, page, context = {}):
     # Get the navigation items for the user
     context["nav_items"] = group_nav_dictionary[getGroup(request.user)]
     # Return the render of the 
