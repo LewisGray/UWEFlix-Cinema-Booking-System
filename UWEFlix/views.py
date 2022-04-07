@@ -18,7 +18,7 @@ from django.contrib.auth.forms import PasswordChangeForm
 from django.http import HttpResponseRedirect
 from django.http import JsonResponse
 import json
-from UWEFlix.render import groupSpecificRender
+from UWEFlix.render import dynamicRender
 
 # Overwrite the get context data function
 def getFilmContext(column_number):
@@ -50,15 +50,15 @@ def student_view(request):
     # Get the films
     context = getFilmContext(3)
     # Render the page with the films
-    return groupSpecificRender(request, "UWEFlix/student.html", context)
+    return dynamicRender(request, "UWEFlix/student.html", context)
 
 # About page view navigated from navbar
 def about(request):
-    return groupSpecificRender(request, "UWEFlix/about.html")
+    return dynamicRender(request, "UWEFlix/about.html")
 
 # View to provide representative a UI to manage films
 def movies(request):
-    return groupSpecificRender(request, "UWEFlix/movies.html")
+    return dynamicRender(request, "UWEFlix/movies.html")
 
 # The login page
 @unauthenticated_required
@@ -86,7 +86,7 @@ def loginView(request):
     # Put the form into the context
     context = {'form': form}
     # Render the page with the context
-    return groupSpecificRender(request, "UWEFlix/login.html", context)
+    return dynamicRender(request, "UWEFlix/login.html", context)
 
 # Logout view
 def userLogout(request):
@@ -119,14 +119,14 @@ def register(request):
     # Put the form into the context
     context = {'form': form}
     # Render the page with the context
-    return groupSpecificRender(request, "UWEFlix/register.html", context)
+    return dynamicRender(request, "UWEFlix/register.html", context)
 
 # View to provide cinema manager a UI to manage films
 @login_required(login_url='login')
 @permitted(roles=["Cinema Manager", "Cinema Employee"])
 def film_management_view(request):
     filmList = Film.objects.all()
-    return groupSpecificRender(request, "UWEFlix/film_manager.html",{'filmList':filmList})
+    return dynamicRender(request, "UWEFlix/film_manager.html",{'filmList':filmList})
 
 
 # View to provide cinema manager a UI to manage films
@@ -134,7 +134,7 @@ def film_management_view(request):
 @permitted(roles=["Cinema Manager"])
 def club_management_view(request):
     clubList = Club.objects.all()
-    return groupSpecificRender(request, "UWEFlix/club_manager.html",{'clubList':clubList})
+    return dynamicRender(request, "UWEFlix/club_manager.html",{'clubList':clubList})
 
 # View to provide cinema manager a UI to manage user bookings
 @login_required(login_url='login')
@@ -143,7 +143,7 @@ def booking_management_view(request):
     #
     booking_list = Booking.objects.all()
     #
-    return groupSpecificRender(request, "UWEFlix/booking_manager.html", {'booking_list': booking_list})
+    return dynamicRender(request, "UWEFlix/booking_manager.html", {'booking_list': booking_list})
 
 # View to allow a user to check their bookings
 @login_required(login_url='login')
@@ -151,20 +151,20 @@ def user_bookings(request):
     # Get all the associated bookings for the user
     booking_list = Booking.objects.filter(customer=request.user)
     # Render the bookings page
-    return groupSpecificRender(request, "UWEFlix/userBookings_manager.html", {'booking_list': booking_list})
+    return dynamicRender(request, "UWEFlix/userBookings_manager.html", {'booking_list': booking_list})
 
 
 # View to provide account manager a UI to manage accounts
 def account_management_view(request):
-    return groupSpecificRender(request, "UWEFlix/account_manager.html")
+    return dynamicRender(request, "UWEFlix/account_manager.html")
 
 # View to provide representative a UI to manage films
 def representative_view(request):
-    return groupSpecificRender(request, "UWEFlix/representative.html")
+    return dynamicRender(request, "UWEFlix/representative.html")
 
 # View to provide representative a UI to manage films
 def noAccess(request):
-    return groupSpecificRender(request, "UWEFlix/no_access.html")
+    return dynamicRender(request, "UWEFlix/no_access.html")
 
 @login_required(login_url='login')
 @permitted(roles=["Cinema Manager", "Cinema Employee"])
@@ -185,7 +185,7 @@ def log_film(request):
     # Otherwise
     else:
         # Take the user to the film creator page
-        return groupSpecificRender(request, "UWEFlix/CRUD/form.html", {"form": form})
+        return dynamicRender(request, "UWEFlix/CRUD/form.html", {"form": form})
 
 #Update a film in the database
 @login_required(login_url='login')
@@ -204,7 +204,7 @@ def updateFilm(request, filmName):
             film.upload_date = datetime.now()
             film.save()
             return redirect("film_management")
-    return groupSpecificRender(request, "UWEFlix/CRUD/form.html",{"form": form})
+    return dynamicRender(request, "UWEFlix/CRUD/form.html",{"form": form})
 
 @login_required(login_url='login')
 @permitted(roles=["Cinema Manager", "Cinema Employee"])
@@ -228,7 +228,7 @@ def removeFilm(request,object):
             # Delete the film from the database
             film.delete()
         return redirect("film_management")
-    return groupSpecificRender(request, "UWEFlix/CRUD/remove.html",{"object": film.title})
+    return dynamicRender(request, "UWEFlix/CRUD/remove.html",{"object": film.title})
 
 
 #Remove a film from the database
@@ -250,7 +250,7 @@ def log_club(request):
     # Otherwise
     else:
         # Take the user to the form page
-        return groupSpecificRender(request, "UWEFlix/CRUD/form.html", {"form": form})
+        return dynamicRender(request, "UWEFlix/CRUD/form.html", {"form": form})
 
 
 @login_required(login_url='login')
@@ -268,7 +268,7 @@ def updateClub(request,clubName):
             club = form.save(commit=False)
             club.save()
             return redirect("club_management")
-    return groupSpecificRender(request, "UWEFlix/CRUD/form.html",{"form": form})
+    return dynamicRender(request, "UWEFlix/CRUD/form.html",{"form": form})
 
 @login_required(login_url='login')
 @permitted(roles=["Cinema Manager"])
@@ -277,7 +277,7 @@ def removeClub(request,object):
     if request.method == "POST":
         club.delete()
         return redirect("club_management")
-    return groupSpecificRender(request, "UWEFlix/CRUD/remove.html",{"object": club.name})
+    return dynamicRender(request, "UWEFlix/CRUD/remove.html",{"object": club.name})
 
 
 # Log a booking
@@ -308,7 +308,7 @@ def log_booking(request):
     # Otherwise
     else:
         # Take the user to the film creator page
-        return groupSpecificRender(request, "UWEFlix/CRUD/form.html", {"form": form})
+        return dynamicRender(request, "UWEFlix/CRUD/form.html", {"form": form})
 
 # Update a booking
 @login_required(login_url='login')
@@ -339,7 +339,7 @@ def updateBooking(request, booking_id):
             # Return to the booking management
             return redirect("booking_management")
     # Otherwise, return to the booking form
-    return groupSpecificRender(request, "UWEFlix/CRUD/form.html", {"form": form})
+    return dynamicRender(request, "UWEFlix/CRUD/form.html", {"form": form})
 
 # Remove the booking
 @login_required(login_url='login')
@@ -355,7 +355,7 @@ def removeBooking(request, booking_id):
         # Return to the booking management page
         return redirect("booking_management")
     # Render the remove booking page
-    return groupSpecificRender(request, "UWEFlix/CRUD/remove.html", {"object": booking.id})
+    return dynamicRender(request, "UWEFlix/CRUD/remove.html", {"object": booking.id})
 
 
 # View to allow the cinema manager to manage the users
@@ -377,7 +377,7 @@ def user_management_view(request):
     # Package the users with the groups
     zipped_list = zip(user_list, roles)
     # Render the page with the users and groups
-    return groupSpecificRender(request, "UWEFlix/user_manager.html", {'user_list': zipped_list})
+    return dynamicRender(request, "UWEFlix/user_manager.html", {'user_list': zipped_list})
 
 # Log the user
 @login_required(login_url='login')
@@ -398,7 +398,7 @@ def log_user(request):
             # Return the user to the homepage
             return redirect("user_management")
     # Take the user to 
-    return groupSpecificRender(request, "UWEFlix/userCRUD/form.html", {"form": form, "creating": True})
+    return dynamicRender(request, "UWEFlix/userCRUD/form.html", {"form": form, "creating": True})
 
 # Update the user details
 @login_required(login_url='login')
@@ -446,7 +446,7 @@ def updateUser(request, username):
     # Get all the group names
     groups = Group.objects.all().values_list('name', flat=True)
     # Pass in the form data and the group names
-    return groupSpecificRender(request, "UWEFlix/userCRUD/form.html", {"form": form, "groups": groups})
+    return dynamicRender(request, "UWEFlix/userCRUD/form.html", {"form": form, "groups": groups})
 
 # Remove the user from database
 @login_required(login_url='login')
@@ -462,7 +462,7 @@ def removeUser(request, username):
         # Return to the user management page
         return redirect("user_management")
     # Go to the remove user page, passing in the username
-    return groupSpecificRender(request, "UWEFlix/CRUD/remove.html", {"object": user.username})
+    return dynamicRender(request, "UWEFlix/CRUD/remove.html", {"object": user.username})
 
 # Update own account details
 @login_required(login_url='login')
@@ -503,7 +503,7 @@ def accountView(request):
             else:
                 messages.error(request, 'Please correct the error below.')
     #
-    return groupSpecificRender(request, "UWEFlix/account.html", {"update_form": update_form, "password_form": password_form})
+    return dynamicRender(request, "UWEFlix/account.html", {"update_form": update_form, "password_form": password_form})
 
 
 # View to provide account manager a UI to manage club accounts
@@ -513,7 +513,7 @@ def account_management_view(request):
     # Get a list of all the accounts
     account_list = ClubAccount.objects.all()
     # Return the account manager page with a list of accounts
-    return groupSpecificRender(request, "UWEFlix/account_manager.html", {'account_list': account_list})
+    return dynamicRender(request, "UWEFlix/account_manager.html", {'account_list': account_list})
 
 # Log an account
 @login_required(login_url='login')
@@ -532,7 +532,7 @@ def log_account(request):
             # Return the user to the homepage
             return redirect("account_management")
    
-    return groupSpecificRender(request, "UWEFlix/CRUD/form.html", {"form": form})
+    return dynamicRender(request, "UWEFlix/CRUD/form.html", {"form": form})
 
 # Update an account
 @login_required(login_url='login')
@@ -555,7 +555,7 @@ def updateAccount(request, account_id):
             # Return to the account management
             return redirect("account_management")
     # Otherwise, return to the account form
-    return groupSpecificRender(request, "UWEFlix/CRUD/form.html", {"form": form})
+    return dynamicRender(request, "UWEFlix/CRUD/form.html", {"form": form})
 
 # Remove the account
 @login_required(login_url='login')
@@ -571,14 +571,14 @@ def removeAccount(request, account_id):
         # Return to the booking management page
         return redirect("account_management")
     # Render the remove booking page
-    return groupSpecificRender(request, "UWEFlix/CRUD/remove.html", {"object": account.id})
+    return dynamicRender(request, "UWEFlix/CRUD/remove.html", {"object": account.id})
     
     
     #Showings 
 
 def showing_view(request):
     showingList = Showing.objects.all()
-    return groupSpecificRender(request, "UWEFlix/showings.html", {'showingList':showingList})
+    return dynamicRender(request, "UWEFlix/showings.html", {'showingList':showingList})
     
 @login_required(login_url='login')
 @permitted(roles=["Cinema Manager", "Cinema Employee"])
@@ -596,7 +596,7 @@ def log_showing(request):
             showing.save()
             # Return the user to the homepage
             return redirect("showing")
-    return groupSpecificRender(request, "UWEFlix/CRUD/form.html", {"form": form})
+    return dynamicRender(request, "UWEFlix/CRUD/form.html", {"form": form})
 
 #Update showings in the database
 @login_required(login_url='login')
@@ -612,7 +612,7 @@ def updateShowings(request, object):
             showingName = form.save(commit=False)
             showingName.save()
             return redirect("showing")
-    return groupSpecificRender(request, "UWEFlix/CRUD/form.html",{"form": form})
+    return dynamicRender(request, "UWEFlix/CRUD/form.html",{"form": form})
 
 @login_required(login_url='login')
 @permitted(roles=["Cinema Manager", "Cinema Employee"])
@@ -621,13 +621,13 @@ def removeShowings(request,object):
     if request.method == "POST":
         showingName.delete()
         return redirect("showing")
-    return groupSpecificRender(request, "UWEFlix/CRUD/remove.html",{"object": showingName.id})
+    return dynamicRender(request, "UWEFlix/CRUD/remove.html",{"object": showingName.id})
 
 #Screens 
 
 def screen_view(request):
     screenList = Screens.objects.all()
-    return groupSpecificRender(request, "UWEFlix/screens.html", {'screenList':screenList})
+    return dynamicRender(request, "UWEFlix/screens.html", {'screenList':screenList})
     
 @login_required(login_url='login')
 @permitted(roles=["Cinema Manager", "Cinema Employee"])
@@ -647,7 +647,7 @@ def log_screens(request):
     # Otherwise
     else:
         # Take the user to the film creator page
-        return groupSpecificRender(request, "UWEFlix/CRUD/form.html", {"form": form})
+        return dynamicRender(request, "UWEFlix/CRUD/form.html", {"form": form})
 
 #Update screens in the database
 @login_required(login_url='login')
@@ -666,7 +666,7 @@ def updateScreens(request, object):
             screenName = form.save(commit=False)
             screenName.save()
             return redirect("screens")
-    return groupSpecificRender(request, "UWEFlix/CRUD/form.html",{"form": form})
+    return dynamicRender(request, "UWEFlix/CRUD/form.html",{"form": form})
 
 @login_required(login_url='login')
 @permitted(roles=["Cinema Manager", "Cinema Employee"])
@@ -675,7 +675,7 @@ def removeScreens(request,object):
     if request.method == "POST":
         screenName.delete()
         return redirect("screens")
-    return groupSpecificRender(request, "UWEFlix/CRUD/remove.html",{"object": screenName.id})
+    return dynamicRender(request, "UWEFlix/CRUD/remove.html",{"object": screenName.id})
 
 
 # Book a film
@@ -692,7 +692,7 @@ def bookFilm(request, title):
         # Return home
         return redirect('home')
     # Otherwise render the userBookFilm, passing in the film title
-    return groupSpecificRender(request, "UWEFlix/userBookFilm_manager.html", {'showing_list':showing_list, 'filmTitle': title})
+    return dynamicRender(request, "UWEFlix/userBookFilm_manager.html", {'showing_list':showing_list, 'filmTitle': title})
 
 
 #Book tickets
@@ -729,7 +729,7 @@ def bookTickets(request, showing_id):
             booking.showing.taken_tickets += ticket_number
             booking.save()
             #booking.showing.save()
-            return groupSpecificRender(request, "UWEFlix/checkout.html", {"booking": booking})
+            return dynamicRender(request, "UWEFlix/checkout.html", {"booking": booking})
             # Save the models
             
             #messages.success(request, 'Booking ' + booking.id + ' created successfully!')
@@ -737,7 +737,7 @@ def bookTickets(request, showing_id):
             
     else:
         # Take the user to the film creator page
-        return groupSpecificRender(request, "UWEFlix/CRUD/ticket_form.html", {"form": form})
+        return dynamicRender(request, "UWEFlix/CRUD/ticket_form.html", {"form": form})
 
 
             
@@ -769,4 +769,4 @@ def booking_complete(request):
 #complete
 @login_required(login_url='login')
 def booking_success(request):
-    return groupSpecificRender(request, "UWEFlix/complete_booking.html")
+    return dynamicRender(request, "UWEFlix/complete_booking.html")
