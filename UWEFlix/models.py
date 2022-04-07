@@ -1,6 +1,7 @@
 from ctypes import addressof
 from django.db import models
 from django.contrib.auth.models import User
+from django.dispatch import receiver
 
 
 class Club(models.Model):
@@ -73,3 +74,15 @@ class Booking(models.Model):
 class Ticket(models.Model):
     ticketType = models.CharField(primary_key = True,max_length=20)
     ticketPrice = models.FloatField()
+
+# Notifications
+
+class Notification(models.Model):
+    message = models.CharField(max_length=500)
+    sent_date = models.DateTimeField("date logged")
+    receiver = models.ForeignKey(User, on_delete=models.PROTECT)
+    seen = models.BooleanField()
+
+class UserProfile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    unseen_notifications = models.IntegerField()
