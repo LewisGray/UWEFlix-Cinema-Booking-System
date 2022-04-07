@@ -2,16 +2,9 @@ from django.urls import path
 from UWEFlix import views
 from UWEFlix.models import Film
 
-# Get the main student view from the StudentFilmListView class
-student_film_list_view = views.StudentFilmListView.as_view(
-    # Use the student.html page
-    template_name = "UWEFlix/student.html"
-)
-
 # Establish the URLs
 urlpatterns = [
-    # path("", views.student_view, name="home"),
-    path("", student_film_list_view, name="home"), #home screen will be placeholder
+    path("", views.student_view, name="home"),
     path("film_management/", views.film_management_view, name="film_management"),
     path("club_management/", views.club_management_view, name="club_management"),
     path("account_management/", views.account_management_view, name="account_management"),
