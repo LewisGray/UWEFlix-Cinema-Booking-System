@@ -34,7 +34,6 @@
     <td>{{ booking.cost }}</td>
     <td><a class="btn btn-sm btn-outline-info" href="{% url 'update_booking' booking.id %}">Update</a></td>
     <td><a class="btn btn-sm btn-outline-danger" href="{% url 'remove_booking' booking.id %}">Delete</a></td>
-
   </tr>
 {% endfor %}
 {% endblock %} 

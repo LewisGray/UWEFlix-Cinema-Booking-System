@@ -52,10 +52,15 @@
             {% endfor %}
           </ul>
           <span class="navbar-text">
-            {% if request.user|logged_in %}
-              <span class="navbarUserDetails">Howdy, {{ request.user }}</span>
-              <span class="navbarUserDetails"><a href="{% url 'logout' %}">Logout</a></span>
-            {% endif %}
+            {% for user_item in user_items %}
+              {% if user_item.data %}
+                <span class="navbarUserDetails"><a href="{% url user_item.href %}">{{ user_item.text}} ({{ user_item.data }})</a></span>
+              {% elif user_item.href %}
+                <span class="navbarUserDetails"><a href="{% url user_item.href %}">{{ user_item.text}}</a></span>
+              {% else %}
+                <span class="navbarUserDetails">{{ user_item.text}}</span>
+              {% endif %}             
+            {% endfor %}
             <div class="btn-group">
               <button type="button" class="btn btn-dark dropdown-toggle" data-bs-toggle="dropdown"
                 aria-expanded="false">
