@@ -70,6 +70,16 @@ class Booking(models.Model):
     adult_tickets = models.IntegerField()
     cost = models.FloatField()
 
+class tempBooking(models.Model):
+    paid = models.BooleanField(default=False)
+    customer = models.ForeignKey(User, on_delete=models.PROTECT)
+    showing = models.ForeignKey(Showing, on_delete=models.PROTECT)
+    student_tickets = models.IntegerField()
+    child_tickets = models.IntegerField()
+    adult_tickets = models.IntegerField()
+    cost = models.FloatField()
+    
+
 class Ticket(models.Model):
     ticketType = models.CharField(primary_key = True,max_length=20)
     ticketPrice = models.FloatField()

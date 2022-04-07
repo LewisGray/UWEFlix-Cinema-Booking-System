@@ -9,7 +9,7 @@ Add film
   {% csrf_token %}
   {{ form.as_p }}
   <a href="{{ request.META.HTTP_REFERER }}">Cancel</a>
-  <button type="submit" class="save btn btn-default">Log</button>
+  <button type="submit" class="save btn btn-default">{% block buttonName %}Log{% endblock  %}</button>
 </form>
 </div>
 {% endblock %}
