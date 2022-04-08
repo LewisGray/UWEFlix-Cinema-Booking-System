@@ -79,7 +79,20 @@ class tempBooking(models.Model):
     adult_tickets = models.IntegerField()
     cost = models.FloatField()
     
-
 class Ticket(models.Model):
     ticketType = models.CharField(primary_key = True,max_length=20)
     ticketPrice = models.FloatField()
+
+# Notifications
+
+class Notification(models.Model):
+    message = models.CharField(max_length=500)
+    href = models.CharField(max_length=500, default="", null=True)
+    href_data = models.CharField(max_length=500, default="", null=True)
+    sent_date = models.DateTimeField("date logged")
+    receiver = models.ForeignKey(User, on_delete=models.PROTECT)
+    seen = models.IntegerField(default=0)
+
+#class UserProfile(models.Model):
+#    user = models.OneToOneField(User, on_delete=models.CASCADE)
+#    unseen_notifications = models.IntegerField()

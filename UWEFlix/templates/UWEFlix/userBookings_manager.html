@@ -10,32 +10,35 @@
         <div class="album py-5 bg-light">
           <p class="border-middlePage">
             <!-- <div class="card card-body"> -->
-              <table class="table table-sm table-hover">
-                <thead>
-                  <th>Film</th>
-                  <th>Date</th>
-                  <th>Time</th>
-                  <th>Screen</th>
-                  <th>Adults</th>
-                  <th>Students</th>
-                  <th>Children</th>
-                  <th>Cancel</th>
-              </thead>
-              <tbody>
-                {% for booking in booking_list %}
-                  <tr>
-                    <td>{{ booking.showing.film.title }}</td>
-                    <td>{{ booking.showing.date }}</td>
-                    <td>{{ booking.showing.time }}</td>
-                    <td>{{ booking.showing.screen }}</td>
-                    <td>{{ booking.adult_tickets }}</td>
-                    <td>{{ booking.student_tickets }}</td>
-                    <td>{{ booking.child_tickets }}</td>
-                    <td><a class="btn btn-sm btn-outline-info" href="{{ home }}">Request Cancellation</a></td>
-                  </tr>
-                {% endfor %}
-                </tbody>
-              </table>
+              <form method = "POST">
+                {% csrf_token %}
+                <table class="table table-sm table-hover">
+                  <thead>
+                    <th>Film</th>
+                    <th>Date</th>
+                    <th>Time</th>
+                    <th>Screen</th>
+                    <th>Adults</th>
+                    <th>Students</th>
+                    <th>Children</th>
+                    <th>Cancel</th>
+                </thead>
+                <tbody>
+                  {% for booking in booking_list %}
+                    <tr>
+                      <td>{{ booking.showing.film.title }}</td>
+                      <td>{{ booking.showing.date }}</td>
+                      <td>{{ booking.showing.time }}</td>
+                      <td>{{ booking.showing.screen }}</td>
+                      <td>{{ booking.adult_tickets }}</td>
+                      <td>{{ booking.student_tickets }}</td>
+                      <td>{{ booking.child_tickets }}</td>
+                      <td><button type="submit" class="save btn btn-default" name="{{ booking.id }}">Request Cancellation</button></td>
+                    </tr>
+                  {% endfor %}
+                  </tbody>
+                </table>
+              </form>
             <!-- </div>  -->
         </div>
       </section>
