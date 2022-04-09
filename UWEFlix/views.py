@@ -883,7 +883,7 @@ def log_clubRepresentative(request):
 @login_required(login_url='login')
 @permitted(roles=["Cinema Manager", "Cinema Employee"])
 def updateClubRepresentative(request, object):
-    clubRep = ClubRepresentative.objects.get(id = object )
+    clubRep = ClubRepresentative.objects.get(clubRepNumber = object )
     
     form = LogClubRepresentativeForm(instance=clubRep)
   
@@ -901,8 +901,8 @@ def updateClubRepresentative(request, object):
 @login_required(login_url='login')
 @permitted(roles=["Cinema Manager", "Cinema Employee"])
 def removeClubRepresentative(request,object):
-    clubRep = ClubRepresentative.objects.get(id = object)
+    clubRep = ClubRepresentative.objects.get(clubRepNumber = object)
     if request.method == "POST":
         clubRep.delete()
         return redirect("clubRepresentative_management")
-    return dynamicRender(request, "UWEFlix/CRUD/remove.html",{"object": clubRep.id})
+    return dynamicRender(request, "UWEFlix/CRUD/remove.html",{"object": clubRep.clubRepNumber})
