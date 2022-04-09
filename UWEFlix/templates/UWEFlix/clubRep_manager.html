@@ -1,0 +1,35 @@
+{% extends "UWEFlix/management.html" %}
+<!--Title of the page  -->
+{% block title %}Club Rep Management{% endblock %}
+
+{% for alert in messages %}
+    <p class="flashMessage">{{ alert }}</p>
+{% endfor %}
+
+<!-- This should include the url to the form for adding a new item to the database -->
+{% block addLink %}{% url 'add_clubRepresentative' %}{% endblock %}
+{% block addMessage %}Add a Club Representative!{% endblock %}
+
+<!--These are the column names for the table -->
+{% block fieldOne %}<th>Rep Number</th>{% endblock %}
+{% block fieldTwo %}<th>First Name</th>{% endblock %}
+{% block fieldThree %}<th>Last Name</th>{% endblock %}
+{% block fieldFour %}<th>DoB</th>{% endblock %}
+{% block fieldFive %}<th>Mobile Number</th>{% endblock %}
+{% block fieldSix %}<th>Password</th>{% endblock %}
+
+<!-- These are the records in our table pulled from the database -->
+{% block dbObjects %}
+{% for clubRep in clubRep_list %}
+  <tr>
+    <td>{{ clubRep.clubRepNumber }}</td>
+    <td>{{ clubRep.firstName }}</td>
+    <td>{{ clubRep.lastName }}</td>
+    <td>{{ clubRep.dateOfBirth }}</td>
+    <td>{{ clubRep.mobile }}</td>
+    <td>{{ clubRep.clubRepPassword }}</td>
+    <td><a class="btn btn-sm btn-outline-info" href="{% url 'update_clubRepresentative' clubRep.clubRepNumber %}">Update</a></td>
+    <td><a class="btn btn-sm btn-outline-danger" href="{% url 'remove_clubRepresentative' clubRep.clubRepNumber %}">Delete</a></td>
+  </tr>
+{% endfor %}
+{% endblock %} 

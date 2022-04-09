@@ -21,6 +21,8 @@ from django.http import JsonResponse
 import json
 from UWEFlix.notifications import getNotifications, deleteNotification, sendNotificationToGroup, sendNotificationToUser
 from UWEFlix.render import dynamicRender
+import random
+import string
 
 # Overwrite the get context data function
 def getFilmContext(column_number):
@@ -521,7 +523,7 @@ def account_management_view(request):
     # Return the account manager page with a list of accounts
     return dynamicRender(request, "UWEFlix/account_manager.html", {'account_list': account_list})
 
-# Log an account
+# Log a club account
 @login_required(login_url='login')
 @permitted(roles=["Cinema Manager", "Account Manager"])
 def log_account(request):
@@ -827,3 +829,80 @@ def user_bookings(request):
         return redirect("user_bookings")
     # Render the notification page using the notification list
     return dynamicRender(request, "UWEFlix/userBookings_manager.html", {'booking_list': booking_list})
+
+    ########################################################################################################
+
+
+
+
+
+
+
+# View to provide cinema manager a UI to manage films
+@login_required(login_url='login')
+@permitted(roles=["Cinema Manager"])
+def clubRepresentative_management_view(request):
+    repList = ClubRepresentative.objects.all()
+    return dynamicRender(request, "UWEFlix/clubRep_manager.html",{'clubRep_list':repList})
+
+
+
+@login_required(login_url='login')
+@permitted(roles=["Cinema Manager", "Cinema Employee"])
+# Function to allow the addition of clubReps to the database
+def log_clubRepresentative(request):
+    # Define the form
+    form = LogClubRepresentativeForm(request.POST or None)
+    # If posting
+    if request.method == "POST":
+        # If the form is valid
+        if form.is_valid():
+            password = ''.join(random.choices(string.ascii_lowercase, k=10))
+            clubRep = form.save(commit=False)
+            clubRep.save()
+            #Create a new user to allow the rep to login using their rep number and password
+            clubRepUser = User(
+                username = str(clubRep.clubRepNumber),
+            )
+
+            clubRepUser.set_password(password)
+            clubRepUser.save()
+            # Set the user's group to club rep - the basic level account
+            clubRepUser.groups.add(Group.objects.get(name="Club Representative"))
+            clubRep.representative = clubRepUser
+            clubRep.clubRepPassword = password
+            clubRep.save()
+            # Return the user to the homepage
+            return redirect("clubRepresentative_management")
+    # Otherwise
+    else:
+        # Take the user to the clubRep creator page
+        return dynamicRender(request, "UWEFlix/CRUD/form.html", {"form": form})
+
+#Update screens in the database
+@login_required(login_url='login')
+@permitted(roles=["Cinema Manager", "Cinema Employee"])
+def updateClubRepresentative(request, object):
+    clubRep = ClubRepresentative.objects.get(id = object )
+    
+    form = LogClubRepresentativeForm(instance=clubRep)
+  
+    if request.method == "POST":
+        # If the film is valid
+        form = LogClubRepresentativeForm(request.POST, instance = clubRep)
+        if form.is_valid():
+           
+            # Save the film details
+            clubRep = form.save(commit=False)
+            clubRep.save()
+            return redirect("clubRepresentative_management")
+    return dynamicRender(request, "UWEFlix/CRUD/form.html",{"form": form})
+
+@login_required(login_url='login')
+@permitted(roles=["Cinema Manager", "Cinema Employee"])
+def removeClubRepresentative(request,object):
+    clubRep = ClubRepresentative.objects.get(id = object)
+    if request.method == "POST":
+        clubRep.delete()
+        return redirect("clubRepresentative_management")
+    return dynamicRender(request, "UWEFlix/CRUD/remove.html",{"object": clubRep.id})

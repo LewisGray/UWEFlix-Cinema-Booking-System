@@ -20,6 +20,13 @@ urlpatterns = [
     path("update_film/<str:filmName>", views.updateFilm, name="update_film"),
     path("remove_film/<str:object>", views.removeFilm, name="remove_film"),
     
+    #Added paths for club rep CRUD
+    path("add_clubRepresentative/", views.log_clubRepresentative, name="add_clubRepresentative"),
+    path("update_clubRepresentative/<str:clubName>", views.updateClubRepresentative, name="update_clubRepresentative"),
+    path("remove_clubRepresentative/<str:object>", views.removeClubRepresentative, name="remove_clubRepresentative"),
+    path("clubRepresentative_management/", views.clubRepresentative_management_view, name="clubRepresentative_management"),
+    ##############################
+
     path("add_club/", views.log_club, name="add_club"),
     path("update_club/<str:clubName>", views.updateClub, name="update_club"),
     path("remove_club/<str:object>", views.removeClub, name="remove_club"),

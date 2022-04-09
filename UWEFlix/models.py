@@ -2,10 +2,22 @@ from ctypes import addressof
 from django.db import models
 from django.contrib.auth.models import User
 
+# Club models
+class ClubRepresentative(models.Model):
+    clubRepNumber = models.AutoField(primary_key=True)
+    firstName = models.CharField(max_length=300)
+    lastName = models.CharField(max_length=300)
+    dateOfBirth = models.CharField(max_length=300)
+    clubRepPassword = models.CharField(max_length=300)
+    mobile = models.CharField(max_length=11)
+    representative = models.ForeignKey(User, on_delete=models.PROTECT, null=True)
+    def __str__(self):
+        return str(self.clubRepNumber)
+
 
 class Club(models.Model):
     name = models.CharField(max_length=300, primary_key=True)
-    representative = models.ForeignKey(User, on_delete=models.PROTECT)
+    representative = models.ForeignKey(ClubRepresentative, on_delete=models.PROTECT)
     address = models.CharField(max_length=300)
     landline = models.CharField(max_length=11)
     mobile = models.CharField(max_length=11)
@@ -13,7 +25,6 @@ class Club(models.Model):
     def __str__(self):
         return str(self.name)
     
-# Club models
 
 class ClubAccount(models.Model):
     account_title = models.CharField(max_length=300)
