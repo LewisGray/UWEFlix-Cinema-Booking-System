@@ -3,9 +3,10 @@
 Login 
 {% endblock %}
 {% block content %}
-<section class="py-5 text-center container">
-    <h1 class="jumbotron-heading">Login page</h1>
-</section>    <form method = "POST" actions="" class="accountForm">
+    <section class="py-5 text-center container">
+        <h1 class="jumbotron-heading">Login page</h1>
+    </section>    
+    <form method = "POST" actions="" class="accountForm">
         {% csrf_token %}
         <div class="accountFormField">
             <p>{{ form.username.label }}:</p>
@@ -17,10 +18,15 @@ Login
         </div>
         <input type="submit" name="Login User" value="Login" class="accountFormSubmit btn-primary">
     </form>
+    <div class="text-center">
     {{ form.errors }}
     {% for alert in messages %}
         <p class="flashMessage">{{ alert }}</p>
     {% endfor %}
     <br>
-    <p>Don't have an account? <a href="{% url 'register' %}">Sign Up</a></p>
+        <a href="{% url 'reset_password' %}"> Forgot password? </a>
+    <br>
+    <br>
+        <p>Don't have an account? <a href="{% url 'register' %}">Sign Up</a></p>
+    </div>  
 {% endblock %}
