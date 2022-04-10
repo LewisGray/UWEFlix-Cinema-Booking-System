@@ -2,10 +2,12 @@ from django.dispatch import receiver
 from django.shortcuts import render
 from django.contrib.auth.models import Group
 from UWEFlix.models import Notification
+from UWEFlix.models import Film
+from math import ceil
 
-# 
+# Establish a text item object
 class TextItem():
-    # 
+    # On creation
     def __init__(self, text):
         # Get the text
         self.text = text
@@ -19,9 +21,9 @@ class LinkItem():
         # Get the href link
         self.href = href
 
-# 
+# Establish a link data item class
 class LinkDataItem():
-    # 
+    # On creation
     def __init__(self, text, href, data):
         # Get the text
         self.text = text
@@ -87,6 +89,38 @@ def getNotificationNumber(user):
     # Return the number of notifications
     return len(notifications)
 
+# Overwrite the get context data function
+def getFilmContext(column_number):
+    # Get the films through an SQL query
+    film_list = Film.objects.order_by("-upload_date")
+    # Define the film list, split into rows
+    split_film_list = []
+    # Calculate the number of rows
+    row_number = ceil(len(film_list)/column_number)
+    # For each row
+    for row in range(row_number):
+        # Get the start position of films to get from the film list
+        start_pos = row * column_number
+        # Get the end position of films to get from the film list
+        end_pos = start_pos + column_number
+        # If the end position is beyond the size of the film list 
+        if end_pos > len(film_list):
+            # Set the position to the size of the film list
+            end_pos = len(film_list)
+        # Add a list of films for the row on to the split film list
+        split_film_list.append(Film.objects.order_by("-upload_date")[start_pos:end_pos])
+    # Define the movies list in the context as the split film list
+    context = {'movies_list': split_film_list}
+    # Return the context
+    return context
+
+# get the widgets for the user
+def getWidgetContext(request):
+    # Create the context
+    context = {}
+    # Return the context
+    return context
+
 # Render the page with the user's navigation items
 def dynamicRender(request, page, context = {}):
     # Get the user's group
@@ -95,6 +129,8 @@ def dynamicRender(request, page, context = {}):
     context["nav_items"] = group_nav_dictionary[user_group]
     # Get the user items
     context["user_items"] = user_dictionary[user_group]
+    # Get the user's group
+    context["user_group"] = user_group
     # If the user is logged in
     if not request.user.is_anonymous:
         # Add their name to the user item

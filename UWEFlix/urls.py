@@ -6,6 +6,10 @@ from django.contrib.auth import views as auth_views
 # Establish the URLs
 urlpatterns = [
     path("", views.student_view, name="home"),
+    path("cinema_manager_home/", views.widgetHome, name="cinema_manager_home"),
+    path("cinema_employee_home/", views.widgetHome, name="cinema_employee_home"),
+    path("account_manager_home/", views.widgetHome, name="account_manager_home"),
+    path("admin_home/", views.widgetHome, name="admin_home"),
     path("film_management/", views.film_management_view, name="film_management"),
     path("club_management/", views.club_management_view, name="club_management"),
     path("account_management/", views.account_management_view, name="account_management"),
