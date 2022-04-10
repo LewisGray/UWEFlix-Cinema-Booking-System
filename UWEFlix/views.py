@@ -8,7 +8,6 @@ from django.views.generic import ListView
 from UWEFlix.email import sendEmail
 from UWEFlix.models import ClubAccount, Film, Booking, Notification, Showing, Screens, Ticket, tempBooking
 from UWEFlix.forms import *
-from math import *
 from django.contrib.auth import *
 from django.contrib.auth.decorators import *
 from django.contrib.auth.models import Group
@@ -20,41 +19,37 @@ from django.http import HttpResponseRedirect
 from django.http import JsonResponse
 import json
 from UWEFlix.notifications import getNotifications, deleteNotification, sendNotificationToGroup, sendNotificationToUser
-from UWEFlix.render import dynamicRender
+from UWEFlix.render import dynamicRender, getFilmContext, getWidgetContext, getGroup
 import random
 import string
-
-# Overwrite the get context data function
-def getFilmContext(column_number):
-    # Get the films through an SQL query
-    film_list = Film.objects.order_by("-upload_date")
-    # Define the film list, split into rows
-    split_film_list = []
-    # Calculate the number of rows
-    row_number = ceil(len(film_list)/column_number)
-    # For each row
-    for row in range(row_number):
-        # Get the start position of films to get from the film list
-        start_pos = row * column_number
-        # Get the end position of films to get from the film list
-        end_pos = start_pos + column_number
-        # If the end position is beyond the size of the film list 
-        if end_pos > len(film_list):
-            # Set the position to the size of the film list
-            end_pos = len(film_list)
-        # Add a list of films for the row on to the split film list
-        split_film_list.append(Film.objects.order_by("-upload_date")[start_pos:end_pos])
-    # Define the movies list in the context as the split film list
-    context = {'movies_list': split_film_list}
-    # Return the context
-    return context
 
 # Student view presenting the UI to book tickets
 def student_view(request):
     # Get the films
     context = getFilmContext(3)
-    # Render the page with the films
+    # Get the user group
+    group = getGroup(request.user)
+    # Otherwise if they are the cinema manager
+    if group == "Cinema Manager":
+        # Take them to the cinema manager home
+        return redirect('cinema_manager_home')
+    # If they are a cinema employee
+    elif group == "Cinema Employee":
+        # Take them to the cinema employee home
+        return redirect('cinema_employee_home')
+    # Otherewise if it's the account manager
+    elif group == "Account Manager":
+        # Take them to the account manager home
+        return redirect('account_manager_home')
+    # Otherwise, render the student page
     return dynamicRender(request, "UWEFlix/student.html", context)
+
+# Get the home page for the user type
+def widgetHome(request):
+    # Get the films
+    context = getFilmContext(3)
+    # Return the home page
+    return dynamicRender(request, "UWEFlix/widget_home.html", context)
 
 # About page view navigated from navbar
 def about(request):
