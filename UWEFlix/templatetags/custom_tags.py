@@ -14,3 +14,43 @@ def has_group(user, group_name):
 def logged_in(user):
     # Return whether the user is authenticated
     return user.is_authenticated
+
+# Check if an item is a link
+@register.filter(name='is_link')
+def is_link(item):
+    # If the type is a link
+    if item.type == "link":
+        # Return True
+        return True
+    # Else, return false
+    return False
+
+# Check if an item is a notification
+@register.filter(name='is_notification')
+def is_notification(item):
+    # If the type is a notification
+    if item.type == "notification":
+        # Return True
+        return True
+    # Else, return false
+    return False
+
+# Check if an item is text
+@register.filter(name='is_text')
+def is_text(item):
+    # If the type is text
+    if item.type == "text":
+        # Return True
+        return True
+    # Else, return false
+    return False
+
+# Check if unseen notifications
+@register.filter(name='unseen_notifications')
+def unseen_notifications(item):
+    # If the count is more than 0
+    if item.count > 0:
+        # Return True
+        return True
+    # Else, return false
+    return False

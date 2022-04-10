@@ -11,6 +11,8 @@ class TextItem():
     def __init__(self, text):
         # Get the text
         self.text = text
+        # Set the item type
+        self.type = "text"
 
 # Establish the navigation item class
 class LinkItem():
@@ -20,17 +22,21 @@ class LinkItem():
         self.text = text
         # Get the href link
         self.href = href
+        # Set the item type
+        self.type = "link"
 
 # Establish a link data item class
-class LinkDataItem():
+class NotificationItem():
     # On creation
-    def __init__(self, text, href, data):
-        # Get the text
-        self.text = text
+    def __init__(self, icon, href, count):
+        # Get the icon
+        self.icon = icon
         # Get the href link
         self.href = href
         # Get the data for the item
-        self.data = data
+        self.count = count
+        # Set the item type
+        self.type = "notification"
 
 # Establish the navigation bar items
 movie_nav_item = LinkItem("Movies", 'home')
@@ -60,7 +66,7 @@ group_nav_dictionary = {
 # Establish the user information items
 welcome_message_user_item = TextItem("Howdy, ")
 logout_user_item = LinkItem("Logout", 'logout')
-notifications_user_item = LinkDataItem("Notifications", 'notifications', 0)
+notifications_user_item = NotificationItem("fa fa-bell", 'notifications', 0)
 
 # Set a dictionary for the user items
 user_dictionary = {
@@ -136,6 +142,6 @@ def dynamicRender(request, page, context = {}):
         # Add their name to the user item
         context["user_items"][0].text = f"Howdy, {request.user.username}!"
         # Set the user's number of notifications
-        context["user_items"][2].data = getNotificationNumber(request.user)
+        context["user_items"][2].count = getNotificationNumber(request.user)
     # Return the render of the page
     return render(request, page, context)

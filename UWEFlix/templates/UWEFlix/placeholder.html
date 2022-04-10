@@ -15,6 +15,7 @@
   <!-- Bootstrap core CSS -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
     integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <meta name="theme-color" content="#7952b3" />
 
   <style>
@@ -53,13 +54,20 @@
           </ul>
           <span class="navbar-text">
             {% for user_item in user_items %}
-              {% if user_item.data %}
-                <span class="navbarUserDetails"><a href="{% url user_item.href %}">{{ user_item.text}} ({{ user_item.data }})</a></span>
-              {% elif user_item.href %}
-                <span class="navbarUserDetails"><a href="{% url user_item.href %}">{{ user_item.text}}</a></span>
-              {% else %}
-                <span class="navbarUserDetails">{{ user_item.text}}</span>
-              {% endif %}             
+              {% if user_item|is_text %}
+                <span class="navbarUserDetails">{{ user_item.text}}</span>       
+              {% endif %}
+              {% if user_item|is_link %}
+                <span class="navbarUserDetails"><a href="{% url user_item.href %}">{{ user_item.text}}</a></span>       
+              {% endif %}
+              {% if user_item|is_notification %}
+                <a href="{% url user_item.href %}" class="notification">
+                  <span><i class="{{ user_item.icon }}"></i></span>
+                  {% if user_item|unseen_notifications %}
+                    <span class="badge">{{ user_item.count }}</span>
+                  {% endif %}
+                </a> 
+              {% endif %}      
             {% endfor %}
             <div class="btn-group">
               <button type="button" class="btn btn-dark dropdown-toggle" data-bs-toggle="dropdown"
