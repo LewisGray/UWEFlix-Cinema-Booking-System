@@ -703,44 +703,84 @@ def bookFilm(request, title):
 def bookTickets(request, showing_id):
     # Get the showing with matching ID
     showing = Showing.objects.get(id = showing_id)
-    # Define the form
-    form = BookTicketsForm(request.POST or None)
-    # If posting
-    if request.method == "POST":
-        # If the account is valid
-        if form.is_valid():
-            # Save the details
-            booking = form.save(commit=False)
-            booking.showing = showing
-            booking.customer = request.user
-            # get the number of each type of ticket
-            adultNum = int(request.POST.get('adult_tickets'))
-            studentNum =int(request.POST.get('student_tickets'))
-            childNum =int(request.POST.get('child_tickets'))
-            ticket_number = adultNum +studentNum+childNum
-            #
-            if ticket_number > booking.showing.screen.capacity - booking.showing.taken_tickets:
+    ##############################################
+    #Alternate path for club reps to book
+    if request.user.groups.filter(name = "Club Representative").exists():
+        form = BookRepTicketsForm(request.POST or None)
+        # If posting
+        if request.method == "POST":
+            # If the account is valid
+            if form.is_valid():
+                # Save the details
+                booking = form.save(commit=False)
+                booking.showing = showing
+                booking.customer = request.user
+                booking.child_tickets = 0
+                booking.adult_tickets = 0
+                # get the number of each type of ticket
+                studentNum =int(request.POST.get('student_tickets'))
+                ticket_number = studentNum
                 #
-                return HttpResponseRedirect(request.path_info)
-            #Calculate cost and proceed to checkout
-            adultTicket = Ticket.objects.get(ticketType = 'adult_ticket')
-            studentTicket = Ticket.objects.get(ticketType = 'student_ticket')
-            childTicket = Ticket.objects.get(ticketType = 'child_ticket')
-            totalPrice = (adultTicket.ticketPrice*adultNum)+(studentTicket.ticketPrice*studentNum)+(childTicket.ticketPrice*childNum)
-            booking.cost = totalPrice
-            # Increase the ticket number by the number of tickets booked
-            booking.showing.taken_tickets += ticket_number
-            booking.save()
-            #booking.showing.save()
-            return dynamicRender(request, "UWEFlix/checkout.html", {"booking": booking})
-            # Save the models
-            
-            #messages.success(request, 'Booking ' + booking.id + ' created successfully!')
-            # Return the user to the homepage
-            
+                if ticket_number > booking.showing.screen.capacity - booking.showing.taken_tickets:
+                    #
+                    return HttpResponseRedirect(request.path_info)
+                #Calculate cost and proceed to checkout  
+                studentTicket = Ticket.objects.get(ticketType = 'student_ticket')
+                clubRep = ClubRepresentative.objects.get(representative = request.user)
+                club = Club.objects.get(representative = clubRep)
+                clubAccount = ClubAccount.objects.get(club = club)
+                totalPrice = (studentTicket.ticketPrice*studentNum)*clubAccount.discountRate
+                booking.cost = totalPrice
+                booking.save()
+                #booking.showing.save()
+                return dynamicRender(request, "UWEFlix/checkout.html", {"booking": booking})
+                # Save the models
+                
+                #messages.success(request, 'Booking ' + booking.id + ' created successfully!')
+                # Return the user to the homepage
+                
+        else:
+            # Take the user to the film creator page
+            return dynamicRender(request, "UWEFlix/CRUD/ticket_form.html", {"form": form})
+
+#######################################################################################################
     else:
-        # Take the user to the film creator page
-        return dynamicRender(request, "UWEFlix/CRUD/ticket_form.html", {"form": form})
+        # Define the form
+        form = BookTicketsForm(request.POST or None)
+        # If posting
+        if request.method == "POST":
+            # If the account is valid
+            if form.is_valid():
+                # Save the details
+                booking = form.save(commit=False)
+                booking.showing = showing
+                booking.customer = request.user
+                # get the number of each type of ticket
+                adultNum = int(request.POST.get('adult_tickets'))
+                studentNum =int(request.POST.get('student_tickets'))
+                childNum =int(request.POST.get('child_tickets'))
+                ticket_number = adultNum +studentNum+childNum
+                #
+                if ticket_number > booking.showing.screen.capacity - booking.showing.taken_tickets:
+                    #
+                    return HttpResponseRedirect(request.path_info)
+                #Calculate cost and proceed to checkout
+                adultTicket = Ticket.objects.get(ticketType = 'adult_ticket')
+                studentTicket = Ticket.objects.get(ticketType = 'student_ticket')
+                childTicket = Ticket.objects.get(ticketType = 'child_ticket')
+                totalPrice = (adultTicket.ticketPrice*adultNum)+(studentTicket.ticketPrice*studentNum)+(childTicket.ticketPrice*childNum)
+                booking.cost = totalPrice
+                booking.save()
+                #booking.showing.save()
+                return dynamicRender(request, "UWEFlix/checkout.html", {"booking": booking})
+                # Save the models
+                
+                #messages.success(request, 'Booking ' + booking.id + ' created successfully!')
+                # Return the user to the homepage
+                
+        else:
+            # Take the user to the film creator page
+            return dynamicRender(request, "UWEFlix/CRUD/ticket_form.html", {"form": form})
 
 #complete
 @login_required(login_url='login')

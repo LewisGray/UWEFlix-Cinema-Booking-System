@@ -106,6 +106,15 @@ class BookTicketsForm(forms.ModelForm):
         # Get the ticket numbers
         fields = ['adult_tickets', 'student_tickets', 'child_tickets']
 
+# Form to book tickets for club rep
+class BookRepTicketsForm(forms.ModelForm):
+    # metadata
+    class Meta:
+        # Using Booking models
+        model = tempBooking
+        # Get the ticket numbers
+        fields = ['student_tickets']
+
 # A form to add a film to the database
 class LogClubRepresentativeForm(forms.ModelForm):
     # Metadata class
