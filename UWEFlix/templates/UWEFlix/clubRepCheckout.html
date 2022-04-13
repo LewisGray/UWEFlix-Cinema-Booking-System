@@ -1,0 +1,22 @@
+{% extends "UWEFlix/checkout.html" %}
+{% block content %}
+<section class="jumbotron text-center"> 
+  <body>
+    <h1>Booking Summary</h1>
+    <p>
+    {{ booking.customer.username }}
+    {{ booking.showing.film.title }}
+    {{ booking.showing.date }}
+    {{ booking.showing.time }}
+    {{ booking.student_tickets }}
+    {{ booking.cost }}
+    Your discount rate is : {{account.discountRate}}
+
+    </p>
+      
+
+    <a href= "{% url 'club_booking_complete' booking.id account.id %}"><button>Confirm Booking</button></a>
+    
+  </body>  
+
+{% endblock %}

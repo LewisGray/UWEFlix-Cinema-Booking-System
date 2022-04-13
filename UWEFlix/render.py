@@ -47,19 +47,23 @@ bookings_nav_item = LinkItem("My Bookings", 'user_bookings')
 account_nav_item = LinkItem("Accounts", 'account_management')
 film_mgt_nav_item = LinkItem("Films", 'film_management')
 booking_mgt_nav_item = LinkItem("Bookings", 'booking_management')
+clubRepresentative_mgt_nav_item = LinkItem("Club Representative", 'clubRepresentative_management')
 club_mgt_nav_item = LinkItem("Clubs", 'club_management')
 user_mgt_nav_item = LinkItem("Users", 'user_management')
 screen_mgt_nav_item = LinkItem("Screen", 'screens')
 showing_mgt_nav_item = LinkItem("Showing", 'showing')
+###
+settle_club_account_nav_item = LinkItem("Settle Club Account", 'home')
+###
 
 # Establish the header for each user type
 group_nav_dictionary = {
     "None": [movie_nav_item, about_nav_item, login_nav_item, register_nav_item],
     "Student": [movie_nav_item, about_nav_item, bookings_nav_item],
     "Account Manager": [movie_nav_item, about_nav_item, account_nav_item, club_mgt_nav_item],
-    "Club Representative": [movie_nav_item, about_nav_item, bookings_nav_item],
+    "Club Representative": [movie_nav_item, about_nav_item, bookings_nav_item,settle_club_account_nav_item],
     "Cinema Employee": [movie_nav_item, about_nav_item, film_mgt_nav_item, showing_mgt_nav_item, screen_mgt_nav_item],
-    "Cinema Manager": [movie_nav_item, about_nav_item, film_mgt_nav_item, booking_mgt_nav_item, club_mgt_nav_item, user_mgt_nav_item, showing_mgt_nav_item, screen_mgt_nav_item],
+    "Cinema Manager": [movie_nav_item, about_nav_item, film_mgt_nav_item, booking_mgt_nav_item, club_mgt_nav_item, user_mgt_nav_item, showing_mgt_nav_item, screen_mgt_nav_item,clubRepresentative_mgt_nav_item],
     "Admin": [movie_nav_item, about_nav_item, film_mgt_nav_item, booking_mgt_nav_item, account_nav_item, club_mgt_nav_item, user_mgt_nav_item, showing_mgt_nav_item, screen_mgt_nav_item]
 }
 

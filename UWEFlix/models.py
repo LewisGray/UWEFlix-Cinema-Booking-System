@@ -29,7 +29,7 @@ class Club(models.Model):
 class ClubAccount(models.Model):
     account_title = models.CharField(max_length=300)
     card_number = models.IntegerField()
-    expiry_date = models.DateField()
+    expiry_date = models.CharField(max_length=300)
     club = models.ForeignKey(Club, on_delete=models.PROTECT)
     discountRate = models.FloatField(default = 0.00)
     balance = models.FloatField(default = 0.00)

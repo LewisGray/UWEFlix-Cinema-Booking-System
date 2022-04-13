@@ -23,6 +23,7 @@ from UWEFlix.render import dynamicRender, getFilmContext, getWidgetContext, getG
 import random
 import string
 
+
 # Student view presenting the UI to book tickets
 def student_view(request):
     # Get the films
@@ -703,51 +704,90 @@ def bookFilm(request, title):
 def bookTickets(request, showing_id):
     # Get the showing with matching ID
     showing = Showing.objects.get(id = showing_id)
-    # Define the form
-    form = BookTicketsForm(request.POST or None)
-    # If posting
-    if request.method == "POST":
-        # If the account is valid
-        if form.is_valid():
-            # Save the details
-            booking = form.save(commit=False)
-            booking.showing = showing
-            booking.customer = request.user
-            # get the number of each type of ticket
-            adultNum = int(request.POST.get('adult_tickets'))
-            studentNum =int(request.POST.get('student_tickets'))
-            childNum =int(request.POST.get('child_tickets'))
-            ticket_number = adultNum +studentNum+childNum
-            #
-            if ticket_number > booking.showing.screen.capacity - booking.showing.taken_tickets:
+    ##############################################
+    #Alternate path for club reps to book
+    if request.user.groups.filter(name = "Club Representative").exists():
+        form = BookRepTicketsForm(request.POST or None)
+        # If posting
+        if request.method == "POST":
+            # If the account is valid
+            if form.is_valid():
+                # Save the details
+                booking = form.save(commit=False)
+                booking.showing = showing
+                booking.customer = request.user
+                booking.child_tickets = 0
+                booking.adult_tickets = 0
+                # get the number of each type of ticket
+                studentNum =int(request.POST.get('student_tickets'))
+                ticket_number = studentNum
                 #
-                return HttpResponseRedirect(request.path_info)
-            #Calculate cost and proceed to checkout
-            adultTicket = Ticket.objects.get(ticketType = 'adult_ticket')
-            studentTicket = Ticket.objects.get(ticketType = 'student_ticket')
-            childTicket = Ticket.objects.get(ticketType = 'child_ticket')
-            totalPrice = (adultTicket.ticketPrice*adultNum)+(studentTicket.ticketPrice*studentNum)+(childTicket.ticketPrice*childNum)
-            booking.cost = totalPrice
-            # Increase the ticket number by the number of tickets booked
-            booking.showing.taken_tickets += ticket_number
-            booking.save()
-            #booking.showing.save()
-            return dynamicRender(request, "UWEFlix/checkout.html", {"booking": booking})
-            # Save the models
-            
-            #messages.success(request, 'Booking ' + booking.id + ' created successfully!')
-            # Return the user to the homepage
-            
-    else:
-        # Take the user to the film creator page
-        return dynamicRender(request, "UWEFlix/CRUD/ticket_form.html", {"form": form})
+                if ticket_number > booking.showing.screen.capacity - booking.showing.taken_tickets:
+                    #
+                    return HttpResponseRedirect(request.path_info)
+                #Calculate cost and proceed to checkout  
+                studentTicket = Ticket.objects.get(ticketType = 'student_ticket')
+                clubRep = ClubRepresentative.objects.get(representative = request.user)
+                club = Club.objects.get(representative = clubRep)
+                clubAccount = ClubAccount.objects.get(club = club)
+                totalPrice = (studentTicket.ticketPrice*studentNum)-((studentTicket.ticketPrice*studentNum)*clubAccount.discountRate)
+                booking.cost = round(totalPrice,2)
+                booking.save()
+                #booking.showing.save()
+                return dynamicRender(request, "UWEFlix/clubRepCheckout.html", {"booking": booking,"account":clubAccount})
+                # Save the models
+                
+                #messages.success(request, 'Booking ' + booking.id + ' created successfully!')
+                # Return the user to the homepage
+                
+        else:
+            # Take the user to the film creator page
+            return dynamicRender(request, "UWEFlix/CRUD/ticket_form.html", {"form": form})
 
-#complete
+#######################################################################################################
+    else:
+        # Define the form
+        form = BookTicketsForm(request.POST or None)
+        # If posting
+        if request.method == "POST":
+            # If the account is valid
+            if form.is_valid():
+                # Save the details
+                booking = form.save(commit=False)
+                booking.showing = showing
+                booking.customer = request.user
+                # get the number of each type of ticket
+                adultNum = int(request.POST.get('adult_tickets'))
+                studentNum =int(request.POST.get('student_tickets'))
+                childNum =int(request.POST.get('child_tickets'))
+                ticket_number = adultNum +studentNum+childNum
+                #
+                if ticket_number > booking.showing.screen.capacity - booking.showing.taken_tickets:
+                    #
+                    return HttpResponseRedirect(request.path_info)
+                #Calculate cost and proceed to checkout
+                adultTicket = Ticket.objects.get(ticketType = 'adult_ticket')
+                studentTicket = Ticket.objects.get(ticketType = 'student_ticket')
+                childTicket = Ticket.objects.get(ticketType = 'child_ticket')
+                totalPrice = (adultTicket.ticketPrice*adultNum)+(studentTicket.ticketPrice*studentNum)+(childTicket.ticketPrice*childNum)
+                booking.cost = totalPrice
+                booking.save()
+                #booking.showing.save()
+                return dynamicRender(request, "UWEFlix/checkout.html", {"booking": booking})
+                # Save the models
+                
+                #messages.success(request, 'Booking ' + booking.id + ' created successfully!')
+                # Return the user to the homepage
+                
+        else:
+            # Take the user to the film creator page
+            return dynamicRender(request, "UWEFlix/CRUD/ticket_form.html", {"form": form})
+
+#paypal booking complete 
 @login_required(login_url='login')
 def booking_complete(request):
     if request.method == "POST":
         body = json.loads(request.body)
-        print('BODY:',body)
         booking = tempBooking.objects.get(id = body['bookingID'])
         booking.showing.taken_tickets += (booking.student_tickets+booking.child_tickets+booking.adult_tickets)
         confirmedBooking = Booking(
@@ -761,13 +801,39 @@ def booking_complete(request):
         booking.save()
         booking.showing.save()
         confirmedBooking.save()
-        print("KLOL")
+         
     return JsonResponse('Payment submitted..', safe=False)
-        
-#complete
+
+#complete page
 @login_required(login_url='login')
 def booking_success(request):
     return dynamicRender(request, "UWEFlix/complete_booking.html")
+
+
+
+@login_required(login_url='login')
+def club_booking_complete(request,Bid,Aid):
+        booking = tempBooking.objects.get(id = Bid)
+        clubAccount = ClubAccount.objects.get(id = Aid)
+        booking.showing.taken_tickets += (booking.student_tickets+booking.child_tickets+booking.adult_tickets)
+        confirmedBooking = Booking(
+            customer = booking.customer,
+            showing = booking.showing,
+            student_tickets = booking.student_tickets,
+            child_tickets = booking.child_tickets,
+            adult_tickets = booking.adult_tickets,
+            cost = booking.cost )
+        clubAccount.balance -= confirmedBooking.cost
+        clubAccount.save()
+        booking.paid = True
+        booking.save()
+        booking.showing.save()
+        confirmedBooking.save()
+        return redirect("success")
+
+
+        
+
 
 # View a user's notifications
 @login_required(login_url='login')
