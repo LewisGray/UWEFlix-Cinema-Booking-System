@@ -90,6 +90,7 @@ urlpatterns = [
     #Checkout url
     path("bookingComplete/", views.booking_complete, name="complete"),
     path("booking_success/", views.booking_success, name="success"),
+    path("club_booking_complete/<str:Bid>/<str:Aid>", views.club_booking_complete, name="club_booking_complete"),
 
     # Notifications
     path("notifications/", views.viewNotifications, name="notifications")

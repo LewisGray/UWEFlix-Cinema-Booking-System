@@ -23,6 +23,7 @@ from UWEFlix.render import dynamicRender, getFilmContext, getWidgetContext, getG
 import random
 import string
 
+
 # Student view presenting the UI to book tickets
 def student_view(request):
     # Get the films
@@ -729,11 +730,11 @@ def bookTickets(request, showing_id):
                 clubRep = ClubRepresentative.objects.get(representative = request.user)
                 club = Club.objects.get(representative = clubRep)
                 clubAccount = ClubAccount.objects.get(club = club)
-                totalPrice = (studentTicket.ticketPrice*studentNum)*clubAccount.discountRate
-                booking.cost = totalPrice
+                totalPrice = (studentTicket.ticketPrice*studentNum)-((studentTicket.ticketPrice*studentNum)*clubAccount.discountRate)
+                booking.cost = round(totalPrice,2)
                 booking.save()
                 #booking.showing.save()
-                return dynamicRender(request, "UWEFlix/checkout.html", {"booking": booking})
+                return dynamicRender(request, "UWEFlix/clubRepCheckout.html", {"booking": booking,"account":clubAccount})
                 # Save the models
                 
                 #messages.success(request, 'Booking ' + booking.id + ' created successfully!')
@@ -782,12 +783,11 @@ def bookTickets(request, showing_id):
             # Take the user to the film creator page
             return dynamicRender(request, "UWEFlix/CRUD/ticket_form.html", {"form": form})
 
-#complete
+#paypal booking complete 
 @login_required(login_url='login')
 def booking_complete(request):
     if request.method == "POST":
         body = json.loads(request.body)
-        print('BODY:',body)
         booking = tempBooking.objects.get(id = body['bookingID'])
         booking.showing.taken_tickets += (booking.student_tickets+booking.child_tickets+booking.adult_tickets)
         confirmedBooking = Booking(
@@ -801,13 +801,39 @@ def booking_complete(request):
         booking.save()
         booking.showing.save()
         confirmedBooking.save()
-        print("KLOL")
+         
     return JsonResponse('Payment submitted..', safe=False)
-        
-#complete
+
+#complete page
 @login_required(login_url='login')
 def booking_success(request):
     return dynamicRender(request, "UWEFlix/complete_booking.html")
+
+
+
+@login_required(login_url='login')
+def club_booking_complete(request,Bid,Aid):
+        booking = tempBooking.objects.get(id = Bid)
+        clubAccount = ClubAccount.objects.get(id = Aid)
+        booking.showing.taken_tickets += (booking.student_tickets+booking.child_tickets+booking.adult_tickets)
+        confirmedBooking = Booking(
+            customer = booking.customer,
+            showing = booking.showing,
+            student_tickets = booking.student_tickets,
+            child_tickets = booking.child_tickets,
+            adult_tickets = booking.adult_tickets,
+            cost = booking.cost )
+        clubAccount.balance -= confirmedBooking.cost
+        clubAccount.save()
+        booking.paid = True
+        booking.save()
+        booking.showing.save()
+        confirmedBooking.save()
+        return redirect("success")
+
+
+        
+
 
 # View a user's notifications
 @login_required(login_url='login')
