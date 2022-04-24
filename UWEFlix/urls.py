@@ -16,6 +16,7 @@ urlpatterns = [
     path("representative/", views.representative_view, name="represent"),
     path("about/", views.about, name="about"), 
     path("login/", views.loginView, name="login"),
+    path("accounts/login/", views.loginView, name="login_redirect"),
     path("logout/", views.userLogout, name="logout"),
     path("register/", views.register, name="register"),
     path("account/", views.accountView, name="account"),
