@@ -79,6 +79,7 @@ class Booking(models.Model):
     student_tickets = models.IntegerField()
     child_tickets = models.IntegerField()
     adult_tickets = models.IntegerField()
+    time_booked = models.DateTimeField("date logged")
     cost = models.FloatField()
 
 class tempBooking(models.Model):

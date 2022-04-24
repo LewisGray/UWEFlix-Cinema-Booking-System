@@ -131,7 +131,7 @@ def film_management_view(request):
 
 # View to provide cinema manager a UI to manage films
 @login_required(login_url='login')
-@permitted(roles=["Cinema Manager"])
+@permitted(roles=["Cinema Manager", "Account Manager"])
 def club_management_view(request):
     clubList = Club.objects.all()
     return dynamicRender(request, "UWEFlix/club_manager.html",{'clubList':clubList})
@@ -233,7 +233,7 @@ def removeFilm(request,object):
 
 #Remove a film from the database
 @login_required(login_url='login')
-@permitted(roles=["Cinema Manager"])
+@permitted(roles=["Cinema Manager", "Account Manager"])
 # Function to allow the addition of clubss to the database
 def log_club(request):
     # Define the form
@@ -293,6 +293,7 @@ def log_booking(request):
             # Save the booking details
             booking = form.save(commit=False)
             booking.upload_date = datetime.now()
+            booking.time_booked = datetime.now()
             adultNum = int(request.POST.get('adult_tickets'))
             studentNum =int(request.POST.get('student_tickets'))
             childNum =int(request.POST.get('child_tickets'))
