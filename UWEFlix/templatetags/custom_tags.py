@@ -54,3 +54,23 @@ def unseen_notifications(item):
         return True
     # Else, return false
     return False
+
+# Check if a widget is a list
+@register.filter(name='is_list')
+def is_list(widget):
+    # If the widget is a list
+    if widget.type == "list":
+        # Return True
+        return True
+    # Else, return false
+    return False
+
+# Check if a widget is a button
+@register.filter(name='is_button')
+def is_button(widget):
+    # If the widget is button
+    if widget.type == "button":
+        # Return True
+        return True
+    # Else, return false
+    return False
