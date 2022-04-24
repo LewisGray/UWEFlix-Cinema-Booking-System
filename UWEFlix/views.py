@@ -373,12 +373,8 @@ def user_management_view(request):
     roles = []
     # For each user
     for u in user_list:
-        # For every group
-        for group in u.groups.all():
-            # Get the group name
-            roles.append(group.name)
-            # Stop after the first role
-            break
+        # Add the role
+        roles.append(getGroup(u))
     # Package the users with the groups
     zipped_list = zip(user_list, roles)
     # Render the page with the users and groups
