@@ -9,6 +9,7 @@ Remove film
 <form method = "POST">
   {% csrf_token %}
   <a href="{{ request.META.HTTP_REFERER }}">No, I want to keep "{{object}}"</a>
+  <input type="hidden" name="next" value="{{ request.META.HTTP_REFERER }}">
   <button type="submit" class="save btn btn-default">Yes, delete "{{object}}" </button>
 </form>
 </div>

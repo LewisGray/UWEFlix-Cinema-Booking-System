@@ -348,17 +348,23 @@ def updateBooking(request, booking_id):
 def removeBooking(request, booking_id):
     # Get the booking with matching ID
     booking = Booking.objects.get(id = booking_id)
+    #
+    next = request.POST.get('next', '/')
     # If the form is being posted
     if request.method == "POST":
         # Notify the customer their film has been cancelled
         sendNotificationToUser(request.user, booking.customer, f"Your booking for {booking.showing.film.title} at {booking.showing.date} has been cancelled.")
+        #
+        ticket_number = booking.student_tickets + booking.child_tickets + booking.adult_tickets
+        #
+        booking.showing.taken_tickets -= ticket_number
         # Delete the booking
         booking.delete()
         # Delete any notifications for the booking
         deleteNotification('remove_booking', str(booking_id))
         #messages.success(request, 'Booking ' + booking_id + ' deleted successfully!')
         # Return to the booking management page
-        return redirect("booking_management")
+        return HttpResponseRedirect(next)
     # Render the remove booking page
     return dynamicRender(request, "UWEFlix/CRUD/remove.html", {"object": booking.id})
 
@@ -733,10 +739,7 @@ def bookTickets(request, showing_id):
                 #booking.showing.save()
                 return dynamicRender(request, "UWEFlix/clubRepCheckout.html", {"booking": booking,"account":clubAccount})
                 # Save the models
-                
                 #messages.success(request, 'Booking ' + booking.id + ' created successfully!')
-                # Return the user to the homepage
-                
         else:
             # Take the user to the film creator page
             return dynamicRender(request, "UWEFlix/CRUD/ticket_form.html", {"form": form})
@@ -774,8 +777,6 @@ def bookTickets(request, showing_id):
                 # Save the models
                 
                 #messages.success(request, 'Booking ' + booking.id + ' created successfully!')
-                # Return the user to the homepage
-                
         else:
             # Take the user to the film creator page
             return dynamicRender(request, "UWEFlix/CRUD/ticket_form.html", {"form": form})
@@ -793,6 +794,7 @@ def booking_complete(request):
             student_tickets = booking.student_tickets,
             child_tickets = booking.child_tickets,
             adult_tickets = booking.adult_tickets,
+            time_booked = datetime.now(),
             cost = booking.cost )
         booking.paid = True
         booking.save()
