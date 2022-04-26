@@ -19,10 +19,11 @@ from django.http import HttpResponseRedirect
 from django.http import JsonResponse
 import json
 from UWEFlix.notifications import getNotifications, deleteNotification, sendNotificationToGroup, sendNotificationToUser
-from UWEFlix.render import dynamicRender, getFilmContext, getWidgetContext, getGroup
+from UWEFlix.render import dynamicRender, getFilmContext, getTopBarContext, getGroup
 import random
 import string
 from UWEFlix.widgets import getWidgets
+from django.contrib.auth import views as auth_views
 
 # Student view presenting the UI to book tickets
 def student_view(request):
@@ -968,3 +969,5 @@ def removeClubRepresentative(request,object):
         clubRep.delete()
         return redirect("clubRepresentative_management")
     return dynamicRender(request, "UWEFlix/CRUD/remove.html",{"object": clubRep.clubRepNumber})
+
+    
