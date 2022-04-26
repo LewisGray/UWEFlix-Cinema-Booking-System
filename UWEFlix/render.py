@@ -130,8 +130,8 @@ def getWidgetContext(request):
     # Return the context
     return context
 
-# Render the page with the user's navigation items
-def dynamicRender(request, page, context = {}):
+#
+def getTopBarContext(request, context = {}):
     # Get the user's group
     user_group = getGroup(request.user)
     # Get the navigation items for the user
@@ -146,5 +146,12 @@ def dynamicRender(request, page, context = {}):
         context["user_items"][0].text = f"Howdy, {request.user.username}!"
         # Set the user's number of notifications
         context["user_items"][2].count = getNotificationNumber(request.user)
+    #
+    return context
+
+# Render the page with the user's navigation items
+def dynamicRender(request, page, context = {}):
+    #
+    context = getTopBarContext(request, context)
     # Return the render of the page
     return render(request, page, context)
