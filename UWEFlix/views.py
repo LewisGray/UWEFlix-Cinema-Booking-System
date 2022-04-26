@@ -824,7 +824,9 @@ def club_booking_complete(request,Bid,Aid):
             student_tickets = booking.student_tickets,
             child_tickets = booking.child_tickets,
             adult_tickets = booking.adult_tickets,
-            cost = booking.cost )
+            cost = booking.cost,
+            time_booked = datetime.now() )
+            
         clubAccount.balance -= confirmedBooking.cost
         clubAccount.save()
         booking.paid = True

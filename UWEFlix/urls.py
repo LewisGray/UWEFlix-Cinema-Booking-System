@@ -45,7 +45,7 @@ urlpatterns = [
     
     #Added paths for club rep CRUD
     path("add_clubRepresentative/", views.log_clubRepresentative, name="add_clubRepresentative"),
-    path("update_clubRepresentative/<str:RepID>", views.updateClubRepresentative, name="update_clubRepresentative"),
+    path("update_clubRepresentative/<str:object>", views.updateClubRepresentative, name="update_clubRepresentative"),
     path("remove_clubRepresentative/<str:object>", views.removeClubRepresentative, name="remove_clubRepresentative"),
     path("clubRepresentative_management/", views.clubRepresentative_management_view, name="clubRepresentative_management"),
     ##############################
