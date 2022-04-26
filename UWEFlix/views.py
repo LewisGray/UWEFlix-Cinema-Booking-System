@@ -22,7 +22,7 @@ from UWEFlix.notifications import getNotifications, deleteNotification, sendNoti
 from UWEFlix.render import dynamicRender, getFilmContext, getWidgetContext, getGroup
 import random
 import string
-
+from UWEFlix.widgets import getWidgets
 
 # Student view presenting the UI to book tickets
 def student_view(request):
@@ -49,6 +49,8 @@ def student_view(request):
 def widgetHome(request):
     # Get the films
     context = getFilmContext(3)
+    #
+    context["widgets"] = getWidgets(getGroup(request.user))
     # Return the home page
     return dynamicRender(request, "UWEFlix/widget_home.html", context)
 
