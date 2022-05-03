@@ -7,7 +7,7 @@ class ClubRepresentative(models.Model):
     clubRepNumber = models.AutoField(primary_key=True)
     firstName = models.CharField(max_length=300)
     lastName = models.CharField(max_length=300)
-    dateOfBirth = models.CharField(max_length=300)
+    dateOfBirth = models.DateField()
     clubRepPassword = models.CharField(max_length=300)
     mobile = models.CharField(max_length=11)
     representative = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
