@@ -1,0 +1,36 @@
+{% extends "two_factor/_base_focus.html" %}
+{% load i18n two_factor %}
+
+{% block content %}
+    <div class="center">
+      <br>
+      <br>
+      <br>
+      <br>
+      <br>
+      <form action="" method="post" class="accountForm">
+        <h1>{% block title %}{% trans "Login" %}{% endblock %}</h1>
+        {% csrf_token %}
+        <br>
+        <p></p>
+        <br>
+        <table class="mb-3">
+            {{ wizard.management_form }}
+            <br>
+            <p></p>
+            {{ wizard.form }}
+        </table>
+        {# hidden submit button to enable [enter] key #}
+        <input type="submit" value="" class="d-none" />
+        <a href="{% url 'reset_password' %}"> Forgot password? </a>
+        <p>Don't have an account? <a href="{% url 'register' %}">Sign Up</a></p>
+        <br>
+        <p></p>
+        {% if default_device %}
+          <button type="submit" class="btn btn-primary">{% trans "Next" %}</button>
+        {% else %}
+          <button type="submit" class="btn btn-primary">{% trans "Login" %}</button>
+        {% endif %}
+      </form>
+  </div>
+{% endblock %}

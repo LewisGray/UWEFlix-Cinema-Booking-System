@@ -2,30 +2,34 @@
 {% load custom_tags %}
 {% block widgets %}
 <section class="py-5 text-center container widget-container">
-    {% for widget in widgets %}
-        <div class="widget-box .shadow-sm">
-            <div class="widget-box-internal">
-                <h3 class="fw-light">{{ widget.title }}</h3>
-                {% if widget|is_list %}
-                    <ul>
-                        {% for item in widget.items %}
-                            <li>{{ item }}</li>
-                        {% endfor %}
-                    </ul>
-                {% endif %}
-                {% if widget|is_button %}
-                    <div class="widget-button-box">
-                        {% for item in widget.buttons %}
-                            <a href="{% url item.href %}">
-                                <button type="button" class="btn btn-sm btn-outline-secondary">
-                                    {{ item.text }}
-                                </button>
-                            </a>
-                        {% endfor %}
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
+        {% for widget in widgets %}
+            <div class="col">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ widget.title }}</h5>
+                        {% if widget|is_list %}
+                            <ul>
+                                {% for item in widget.items %}
+                                    <li>{{ item }}</li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+                        {% if widget|is_button %}
+                            <div class="widget-button-box">
+                                {% for item in widget.buttons %}
+                                    <a href="{% url item.href %}">
+                                        <button type="button" class="btn btn-sm btn-outline-secondary">
+                                            {{ item.text }}
+                                        </button>
+                                    </a>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
                     </div>
-                {% endif %}
+                </div>
             </div>
-        </div>
-    {% endfor %}
+        {% endfor %}
+    </div>
 </section>
 {% endblock %}

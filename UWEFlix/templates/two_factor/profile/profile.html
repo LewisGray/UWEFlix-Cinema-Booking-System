@@ -1,0 +1,20 @@
+{% extends "two_factor/_base.html" %}
+{% load i18n two_factor %}
+{% block content %}
+  <div class="accountForm">
+  <br><p></p><br><p></p><br><p></p><br><p></p>
+  {% if default_device %}
+    <h3>{% trans "Two-Factor Authentication" %}</h3>
+    <p>{% blocktrans trimmed %}You can disable two-factor authentication for your account.{% endblocktrans %}</p>
+    <br><p></p><br>
+    <p><a class="btn btn-secondary" href="{% url 'two_factor:disable' %}">
+      {% trans "Disable Two-Factor Authentication" %}</a></p>
+  {% else %}
+    <p>{% blocktrans trimmed %}Two-factor authentication can be enabled for additional security: {% endblocktrans %}</p>
+    <br><p></p><br>
+    <p><a href="{% url 'two_factor:setup' %}" class="btn btn-primary">
+      {% trans "Enable Two-Factor Authentication" %}</a>
+    </p>
+  {% endif %}
+</div>
+{% endblock %}

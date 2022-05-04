@@ -1,0 +1,102 @@
+<style>
+    @page {
+        size: letter landscape;
+        margin: 2cm;
+        display: flexbox;
+        flex-direction: row;
+    }
+
+    .bordered {
+        border-bottom-style: solid; 
+        border-bottom-color: black; 
+        border-bottom-width: 1px;
+        border-left-style: solid; 
+        border-left-color: black; 
+        border-left-width: 1px;
+        border-right-style: solid; 
+        border-right-color: black; 
+        border-right-width: 1px;
+        border-top-style: solid; 
+        border-top-color: black; 
+        border-top-width: 1px;
+        text-align: left;
+
+    }
+
+    td {
+        padding-top: 2px;
+        padding-bottom: 2px;
+    }
+</style>
+<div class="statement">
+    <h2>Statement for {{ statement.account_name }} {{ statement.booking_month }}, {{ statement.booking_year }}</h2>
+    {% if statement.no_bookings %}
+        <p>There were no transactions this month.</p>
+    {% else %}
+        <div>
+            <table style="border-bottom-style: 1px solid black;">
+                <tbody>
+                    <tr>
+                        <th scope="row" style="text-align: left; width: 150px;">Statement Date: </th>
+                        <td>{{ statement.todays_date }}</td>
+                    </tr>
+                    <tr>
+                        <th scope="row" style="text-align: left;">Period Covered: </th>
+                        <td>{{ statement.date_range }}</td>
+                    </tr>
+                    <tr>
+                        <th scope="row" style="text-align: left;">Club Name: </th>
+                        <td>{{ statement.account_name }}</td>
+                    </tr>
+                    <tr>
+                        <th scope="row" style="text-align: left;">Club Representative: </th>
+                        <td>{{ statement.rep_name }}</td>
+                    </tr>
+                    <tr>
+                        <th scope="row" style="text-align: left;">Card Number: </th>
+                        <td>{{ statement.card_number }}</td>
+                    </tr>
+                    <tr>
+                        <th scope="row" style="text-align: left;">Transaction Number: </th>
+                        <td >{{ statement.transaction_number }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <br><p>
+        <table class="table">
+            <thead class="thead-dark">
+                <tr class="bordered">
+                    <th scope="col" style="padding-top: 2px; background-color: whitesmoke;">Date</th>
+                    <th scope="col" style="padding-top: 2px; background-color: whitesmoke;">Time</th>
+                    <th scope="col" style="padding-top: 2px; background-color: whitesmoke;">Description</th>
+                    <th scope="col" style="padding-top: 2px; background-color: whitesmoke;">Ticket Number</th>
+                    <th scope="col" style="padding-top: 2px; background-color: whitesmoke;">Amount</th>
+                    <th scope="col" style="padding-top: 2px; background-color: whitesmoke;">Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for transaction, total in statement.transactions %}
+                    <tr class="bordered">
+                        <td style="text-align: center;">{{ transaction.date }}</td>
+                        <td style="text-align: center;">{{ transaction.time }}</td>
+                        <td style="text-align: center;">{{ transaction.description }}</td>
+                        <td style="text-align: center;">{{ transaction.booking.student_tickets }}</td>
+                        <td style="text-align: center;">£{{ transaction.booking.cost }}</td>
+                        <td style="text-align: center;">£{{ total }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            <tbody>
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td class="bordered" style="text-align: center; padding-top: 3px;">£{{ statement.total }}</td>
+                </tr>
+            </tbody>
+        </table>
+    {% endif %}
+</div>
