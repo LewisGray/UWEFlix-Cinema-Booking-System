@@ -6,7 +6,7 @@ from datetime import datetime
 from django.shortcuts import redirect
 from django.views.generic import ListView
 from UWEFlix.email import sendEmail
-from UWEFlix.models import ClubAccount, Film, Booking, Notification, Showing, Screens, Ticket, tempBooking
+from UWEFlix.models import ClubAccount, Film, Booking, Notification, Showing, Screens, Ticket, tempBooking,ClubRepresentative
 from UWEFlix.forms import *
 from django.contrib.auth import *
 from django.contrib.auth.decorators import *
@@ -173,6 +173,9 @@ def noAccess(request):
 @permitted(roles=["Cinema Manager", "Cinema Employee"])
 # Function to allow the addition of films to the database
 def log_film(request):
+    user = ClubRepresentative.objects.get(clubRepNumber = 17)
+    user.dateOfBirth = "7-12-2000"
+    user.save()
     # Define the form
     form = LogFilmForm(request.POST or None)
     # If posting
@@ -923,15 +926,16 @@ def log_clubRepresentative(request):
         if form.is_valid():
             password = ''.join(random.choices(string.ascii_lowercase, k=10))
             clubRep = form.save(commit=False)
-            clubRep.save()
+            #clubRep.save()
             #Create a new user to allow the rep to login using their rep number and password
             clubRepUser = User(
                 username = str(clubRep.clubRepNumber),
+                email = clubRep.email
             )
 
             clubRepUser.set_password(password)
             clubRepUser.save()
-            # Set the user's group to club rep - the basic level account
+            # Set the user's group to club rep
             clubRepUser.groups.add(Group.objects.get(name="Club Representative"))
             clubRep.representative = clubRepUser
             clubRep.clubRepPassword = password
