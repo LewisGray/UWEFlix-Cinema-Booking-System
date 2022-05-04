@@ -776,7 +776,7 @@ def bookTickets(request, showing_id):
                 booking.cost = totalPrice
                 booking.save()
                 #booking.showing.save()
-                return dynamicRender(request, "UWEFlix/checkout.html", {"booking": booking})
+                return dynamicRender(request, "UWEFlix/checkoutBooking.html", {"booking": booking, "cost":booking.cost})
                 # Save the models
                 
                 #messages.success(request, 'Booking ' + booking.id + ' created successfully!')
@@ -827,9 +827,8 @@ def club_booking_complete(request,Bid,Aid):
             cost = booking.cost,
             time_booked = datetime.now() )
             
-        clubAccount.balance -= confirmedBooking.cost
+        clubAccount.balance += confirmedBooking.cost
         clubAccount.save()
-        booking.paid = True
         booking.save()
         booking.showing.save()
         confirmedBooking.save()
@@ -972,4 +971,19 @@ def removeClubRepresentative(request,object):
         return redirect("clubRepresentative_management")
     return dynamicRender(request, "UWEFlix/CRUD/remove.html",{"object": clubRep.clubRepNumber})
 
-    
+
+def settleAccount(request):
+    clubRep = ClubRepresentative.objects.get(representative = request.user)
+    club = Club.objects.get(representative = clubRep)
+    clubAccount = ClubAccount.objects.get(club = club,)
+    clubBookingList = Booking.objects.filter(customer = request.user)
+    return dynamicRender(request, "UWEFlix/checkoutAccountSettlement.html",{"clubAccount": clubAccount,"clubBookingList": clubBookingList,"cost":clubAccount.balance})
+
+def settle(request):
+    if request.method == "POST":
+        body = json.loads(request.body)
+        clubAccount = ClubAccount.objects.get(id = body['accountID'])
+        clubAccount.balance = 0
+        clubAccount.save()
+         
+    return JsonResponse('Payment submitted..', safe=False)
