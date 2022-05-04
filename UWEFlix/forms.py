@@ -4,6 +4,10 @@ from UWEFlix.models import ClubAccount, Film,Club,tempBooking, Showing, Screens,
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 
+# Date widget for declaring input types within form
+class DateInput(forms.DateInput):
+    input_type = 'date'
+
 # A form to add a film to the database
 class LogFilmForm(forms.ModelForm):
     # Metadata class
@@ -20,7 +24,7 @@ class AddClubForm(forms.ModelForm):
         # Set the model type to film
         model = Club
         # Define the fields to be included in the film
-        fields = ("name", "representative", "address", "landline", "mobile", "email")
+        fields = ("name", "representative", "address", "landline", "mobile")
         
 # A form to add a showings to the database
 class LogShowingForm(forms.ModelForm):
@@ -30,6 +34,7 @@ class LogShowingForm(forms.ModelForm):
         model = Showing
         # Define the fields to be included in the film
         fields = ('date', 'time', 'film', 'taken_tickets', 'screen')
+        widgets = { "date": DateInput() }
         
 # A form to add screen to the database
 class LogScreenForm(forms.ModelForm):
@@ -115,6 +120,7 @@ class BookRepTicketsForm(forms.ModelForm):
         # Get the ticket numbers
         fields = ['student_tickets']
 
+
 # A form to add a film to the database
 class LogClubRepresentativeForm(forms.ModelForm):
     # Metadata class
@@ -122,4 +128,5 @@ class LogClubRepresentativeForm(forms.ModelForm):
         # Set the model type to film
         model = ClubRepresentative
         # Define the fields to be included in the film
-        fields = ("firstName", "lastName", "dateOfBirth", "mobile")
+        fields = ("firstName", "lastName", "dateOfBirth","email", "mobile")
+        widgets = { "dateOfBirth": DateInput() }

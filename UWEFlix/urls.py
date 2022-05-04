@@ -98,5 +98,9 @@ urlpatterns = [
     path("club_booking_complete/<str:Bid>/<str:Aid>", views.club_booking_complete, name="club_booking_complete"),
 
     # Notifications
-    path("notifications/", views.viewNotifications, name="notifications")
+    path("notifications/", views.viewNotifications, name="notifications"),
+
+     # Settle Club Account
+    path("settleAccount/", views.settleAccount, name="settleAccount"),
+    path("settle/", views.settle, name="settle")
 ]

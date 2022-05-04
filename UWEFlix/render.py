@@ -52,7 +52,7 @@ user_mgt_nav_item = LinkItem("Users", 'user_management')
 screen_mgt_nav_item = LinkItem("Screen", 'screens')
 showing_mgt_nav_item = LinkItem("Showing", 'showing')
 ###
-settle_club_account_nav_item = LinkItem("Settle Club Account", 'home')
+settle_club_account_nav_item = LinkItem("Settle Club Account", 'settleAccount')
 ###
 
 # Establish the header for each user type

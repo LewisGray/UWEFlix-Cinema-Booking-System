@@ -6,7 +6,7 @@ from datetime import datetime
 from django.shortcuts import redirect
 from django.views.generic import ListView
 from UWEFlix.email import sendEmail
-from UWEFlix.models import ClubAccount, Film, Booking, Notification, Showing, Screens, Ticket, tempBooking
+from UWEFlix.models import ClubAccount, Film, Booking, Notification, Showing, Screens, Ticket, tempBooking,ClubRepresentative
 from UWEFlix.forms import *
 from django.contrib.auth import *
 from django.contrib.auth.decorators import *
@@ -156,6 +156,9 @@ def noAccess(request):
 @permitted(roles=["Cinema Manager", "Cinema Employee"])
 # Function to allow the addition of films to the database
 def log_film(request):
+    user = ClubRepresentative.objects.get(clubRepNumber = 17)
+    user.dateOfBirth = "7-12-2000"
+    user.save()
     # Define the form
     form = LogFilmForm(request.POST or None)
     # If posting
@@ -759,7 +762,7 @@ def bookTickets(request, showing_id):
                 booking.cost = totalPrice
                 booking.save()
                 #booking.showing.save()
-                return dynamicRender(request, "UWEFlix/checkout.html", {"booking": booking})
+                return dynamicRender(request, "UWEFlix/checkoutBooking.html", {"booking": booking, "cost":booking.cost})
                 # Save the models
                 
                 #messages.success(request, 'Booking ' + booking.id + ' created successfully!')
@@ -810,9 +813,8 @@ def club_booking_complete(request,Bid,Aid):
             cost = booking.cost,
             time_booked = datetime.now() )
             
-        clubAccount.balance -= confirmedBooking.cost
+        clubAccount.balance += confirmedBooking.cost
         clubAccount.save()
-        booking.paid = True
         booking.save()
         booking.showing.save()
         confirmedBooking.save()
@@ -907,15 +909,16 @@ def log_clubRepresentative(request):
         if form.is_valid():
             password = ''.join(random.choices(string.ascii_lowercase, k=10))
             clubRep = form.save(commit=False)
-            clubRep.save()
+            #clubRep.save()
             #Create a new user to allow the rep to login using their rep number and password
             clubRepUser = User(
                 username = str(clubRep.clubRepNumber),
+                email = clubRep.email
             )
 
             clubRepUser.set_password(password)
             clubRepUser.save()
-            # Set the user's group to club rep - the basic level account
+            # Set the user's group to club rep
             clubRepUser.groups.add(Group.objects.get(name="Club Representative"))
             clubRep.representative = clubRepUser
             clubRep.clubRepPassword = password
@@ -954,8 +957,6 @@ def removeClubRepresentative(request,object):
         clubRep.delete()
         return redirect("clubRepresentative_management")
     return dynamicRender(request, "UWEFlix/CRUD/remove.html",{"object": clubRep.clubRepNumber})
-
-    
 #
 @login_required(login_url='login')
 @permitted(roles=["Account Manager"])
@@ -1038,3 +1039,19 @@ def viewStatement(request, account_id):
     else:
         #
         return dynamicRender(request, "UWEFlix/statement.html", {"statement": statement})
+
+def settleAccount(request):
+    clubRep = ClubRepresentative.objects.get(representative = request.user)
+    club = Club.objects.get(representative = clubRep)
+    clubAccount = ClubAccount.objects.get(club = club,)
+    clubBookingList = Booking.objects.filter(customer = request.user)
+    return dynamicRender(request, "UWEFlix/checkoutAccountSettlement.html",{"clubAccount": clubAccount,"clubBookingList": clubBookingList,"cost":clubAccount.balance})
+
+def settle(request):
+    if request.method == "POST":
+        body = json.loads(request.body)
+        clubAccount = ClubAccount.objects.get(id = body['accountID'])
+        clubAccount.balance = 0
+        clubAccount.save()
+         
+    return JsonResponse('Payment submitted..', safe=False)
