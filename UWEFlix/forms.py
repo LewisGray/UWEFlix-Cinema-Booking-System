@@ -24,7 +24,7 @@ class AddClubForm(forms.ModelForm):
         # Set the model type to film
         model = Club
         # Define the fields to be included in the film
-        fields = ("name", "representative", "address", "landline", "mobile", "email")
+        fields = ("name", "representative", "address", "landline", "mobile")
         
 # A form to add a showings to the database
 class LogShowingForm(forms.ModelForm):
@@ -128,5 +128,5 @@ class LogClubRepresentativeForm(forms.ModelForm):
         # Set the model type to film
         model = ClubRepresentative
         # Define the fields to be included in the film
-        fields = ("firstName", "lastName", "dateOfBirth", "mobile")
+        fields = ("firstName", "lastName", "dateOfBirth","email", "mobile")
         widgets = { "dateOfBirth": DateInput() }

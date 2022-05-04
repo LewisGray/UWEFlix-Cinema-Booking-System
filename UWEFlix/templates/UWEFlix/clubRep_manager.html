@@ -16,7 +16,8 @@
 {% block fieldThree %}<th>Last Name</th>{% endblock %}
 {% block fieldFour %}<th>DoB</th>{% endblock %}
 {% block fieldFive %}<th>Mobile Number</th>{% endblock %}
-{% block fieldSix %}<th>Password</th>{% endblock %}
+{% block fieldSix %}<th>Email Address</th>{% endblock %}
+{% block fieldSeven %}<th>Password</th>{% endblock %}
 
 <!-- These are the records in our table pulled from the database -->
 {% block dbObjects %}
@@ -27,6 +28,7 @@
     <td>{{ clubRep.lastName }}</td>
     <td>{{ clubRep.dateOfBirth }}</td>
     <td>{{ clubRep.mobile }}</td>
+    <td>{{ clubRep.email }}</td>
     <td>{{ clubRep.clubRepPassword }}</td>
     <td><a class="btn btn-sm btn-outline-info" href="{% url 'update_clubRepresentative' clubRep.clubRepNumber %}">Update</a></td>
     <td><a class="btn btn-sm btn-outline-danger" href="{% url 'remove_clubRepresentative' clubRep.clubRepNumber %}">Delete</a></td>
