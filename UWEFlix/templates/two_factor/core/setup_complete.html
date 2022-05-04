@@ -1,0 +1,12 @@
+{% extends "two_factor/_base_focus.html" %}
+{% load i18n %}
+
+{% block content %}
+<div class="accountForm">
+    <br><p></p><br><p></p><br><p></p><br><p></p>
+  <h1>{% block title %}{% trans "Enable Two-Factor Authentication" %}{% endblock %}</h1>
+  <p>{% blocktrans trimmed %}Two-factor authentication is now active.{% endblocktrans %}</p>
+    <p><a href="{% url 'home' %}"
+        class="btn btn-block btn-secondary">{% trans "Done" %}</a></p>
+</div>
+{% endblock %}

@@ -1,0 +1,85 @@
+{% extends "UWEFlix/placeholder.html" %}
+{% block title %}
+{{ statement.account_name }} Statement
+{% endblock %}
+{% block content %}
+    <div class="statement">
+        <br><p></p><br><p></p><br><p></p><br><p></p>
+        <h3>Statement for {{ statement.account_name }} {{ statement.booking_month }}, {{ statement.booking_year }}</h3>
+        <br><p></p><br><p></p><br><p></p><br><p></p>
+        {% if statement.no_bookings %}
+            <p>There were no transactions this month.</p>
+        {% else %}
+            <div style="width:100%; margin-bottom: 3em;">
+                <table>
+                    <tbody>
+                        <tr>
+                            <th scope="row">Statement Date: </th>
+                            <td style="padding: 0.2em; padding-left: 2em;">{{ statement.todays_date }}</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Period Covered: </th>
+                            <td style="padding: 0.2em; padding-left: 2em;">{{ statement.date_range }}</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Club Name: </th>
+                            <td style="padding: 0.2em; padding-left: 2em;">{{ statement.account_name }}</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Club Representative: </th>
+                            <td style="padding: 0.2em; padding-left: 2em;">{{ statement.rep_name }}</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Card Number: </th>
+                            <td style="padding: 0.2em; padding-left: 2em;">{{ statement.card_number }}</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Transaction Number: </th>
+                            <td style="padding: 0.2em; padding-left: 2em;">{{ statement.transaction_number }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <table class="table">
+                <thead class="thead-dark">
+                    <tr>
+                        <th scope="col">Date</th>
+                        <th scope="col">Time</th>
+                        <th scope="col">Description</th>
+                        <th scope="col">Ticket Number</th>
+                        <th scope="col">Amount</th>
+                        <th scope="col">Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for transaction, total in statement.transactions %}
+                        <tr>
+                            <td>{{ transaction.date }}</td>
+                            <td>{{ transaction.time }}</td>
+                            <td>{{ transaction.description }}</td>
+                            <td>{{ transaction.booking.student_tickets }}</td>
+                            <td>£{{ transaction.booking.cost }}</td>
+                            <td>£{{ total }}</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                <tbody>
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td>£{{ statement.total }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        {% endif %}
+        <br><p></p><br><p></p><br><p></p><br><p></p>
+        <form method="POST">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-primary">Generate PDF</button>
+            <br>
+        <a href="{{ request.META.HTTP_REFERER }}">Back</a>
+    </div>
+{% endblock %}
