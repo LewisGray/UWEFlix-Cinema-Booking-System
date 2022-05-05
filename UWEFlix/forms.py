@@ -3,6 +3,8 @@ from django import forms
 from UWEFlix.models import ClubAccount, Film,Club,tempBooking, Showing, Screens,Booking,ClubRepresentative
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
+from datetime import datetime
+from django.core.exceptions import ValidationError
 
 # Date widget for declaring input types within form
 class DateInput(forms.DateInput):
@@ -26,6 +28,11 @@ class AddClubForm(forms.ModelForm):
         # Define the fields to be included in the film
         fields = ("name", "representative", "address", "landline", "mobile")
         
+def present_or_future_date(value):
+    if value < datetime.date.today():
+        raise forms.ValidationError("The date cannot be in the past!")
+    return value
+
 # A form to add a showings to the database
 class LogShowingForm(forms.ModelForm):
     # Metadata class
@@ -35,6 +42,12 @@ class LogShowingForm(forms.ModelForm):
         # Define the fields to be included in the film
         fields = ('date', 'time', 'film', 'taken_tickets', 'screen')
         widgets = { "date": DateInput() }
+    
+    def clean_shortcodeurl(self):
+        data = self.cleaned_data['date']
+        if "my_custom_example_url" not in data:
+            raise ValidationError("my_custom_example_url has to be in the provided data.")
+        return data
         
 # A form to add screen to the database
 class LogScreenForm(forms.ModelForm):

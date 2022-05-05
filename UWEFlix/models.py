@@ -1,6 +1,10 @@
 from ctypes import addressof
 from django.db import models
 from django.contrib.auth.models import User
+import datetime
+from django.core.validators import MinValueValidator
+from django.core.exceptions import ValidationError
+
 
 # Club models
 class ClubRepresentative(models.Model):
@@ -57,11 +61,12 @@ class Film(models.Model):
         
 
 class Showing(models.Model):
-    date = models.DateField()
+    date = models.DateField(validators=[MinValueValidator(datetime.date.today)])
     time = models.TimeField()
     film = models.ForeignKey(Film, on_delete=models.PROTECT)
     screen = models.ForeignKey(Screens, on_delete=models.PROTECT)
-    taken_tickets = models.IntegerField()
+    taken_tickets = models.IntegerField(default=0, validators=[MinValueValidator(0)])
+
     def __str__(self):
         return str(self.film)+" "+str(self.date)+" "+str(self.time)
 
