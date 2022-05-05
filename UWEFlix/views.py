@@ -156,9 +156,7 @@ def noAccess(request):
 @permitted(roles=["Cinema Manager", "Cinema Employee"])
 # Function to allow the addition of films to the database
 def log_film(request):
-    user = ClubRepresentative.objects.get(clubRepNumber = 17)
-    user.dateOfBirth = "7-12-2000"
-    user.save()
+
     # Define the form
     form = LogFilmForm(request.POST or None)
     # If posting
@@ -592,6 +590,9 @@ def log_showing(request):
             showing.save()
             # Return the user to the homepage
             return redirect("showing")
+        else:
+            return dynamicRender(request, "UWEFlix/CRUD/form.html", {"form": form})
+
     return dynamicRender(request, "UWEFlix/CRUD/form.html", {"form": form})
 
 #Update showings in the database
