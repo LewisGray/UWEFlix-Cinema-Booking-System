@@ -688,25 +688,24 @@ def bookFilm(request, title):
         showing_list = Showing.objects.filter(film = film_object).order_by('date')
         current_date = None
         showing_list_date_seperated = []
-        tempTest = []
-
+        
         print ('1. OG Showing list:', showing_list)
-        for showing in showing_list:
+        for count, showing in enumerate(showing_list):
             print ('2. SHOWING in Showing list:', showing)
 
             if current_date != showing.date:
+
                 tempTest = []
                 tempTest.append(showing.date)
                 tempTest.append([])
                 tempTest[1].append(showing)
-                current_date = showing.date
+                showing_list_date_seperated.append(tempTest)
+
+
             else: 
                 tempTest[1].append(showing)
-                tempTest = []
             
-            showing_list_date_seperated.append(tempTest)
-        # print(showing_list)
-        print('3. NEW SHOWING LIST!: ', showing_list_date_seperated)
+            current_date = showing.date
 
     # If there are no showings
     except Showing.DoesNotExist:
@@ -754,6 +753,8 @@ def bookTickets(request, showing_id):
                 return dynamicRender(request, "UWEFlix/clubRepCheckout.html", {"booking": booking,"account":clubAccount})
                 # Save the models
                 #messages.success(request, 'Booking ' + booking.id + ' created successfully!')
+            else:
+                return dynamicRender(request, "UWEFlix/CRUD/form.html", {"form": form})
         else:
             # Take the user to the film creator page
             return dynamicRender(request, "UWEFlix/CRUD/ticket_form.html", {"form": form})
@@ -791,6 +792,8 @@ def bookTickets(request, showing_id):
                 # Save the models
                 
                 #messages.success(request, 'Booking ' + booking.id + ' created successfully!')
+            else:
+                return dynamicRender(request, "UWEFlix/CRUD/form.html", {"form": form})
         else:
             # Take the user to the film creator page
             return dynamicRender(request, "UWEFlix/CRUD/ticket_form.html", {"form": form})
