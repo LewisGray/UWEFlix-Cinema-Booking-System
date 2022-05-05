@@ -8,7 +8,7 @@ if defined _OLD_CODEPAGE (
     "%SystemRoot%\System32\chcp.com" 65001 > nul
 )
 
-set VIRTUAL_ENV=C:\Users\zakme\Documents\ESD\Assignment 2\NewBranch\UWEFlix-Cinema-Booking-System\.venv
+set VIRTUAL_ENV=\\nstu-nas01.uwe.ac.uk\users3$\l25-gray\Personal\UWEFlix\UWEFlix-Cinema-Booking-System\.venv
 
 if not defined PROMPT set PROMPT=$P$G
 

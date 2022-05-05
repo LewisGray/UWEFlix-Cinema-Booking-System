@@ -40,7 +40,7 @@ class NotificationItem():
 
 # Establish the navigation bar items
 movie_nav_item = LinkItem("Movies", 'home')
-login_nav_item = LinkItem("Login", 'login')
+login_nav_item = LinkItem("Login", 'two_factor:login')
 register_nav_item = LinkItem("Register", 'register')
 bookings_nav_item = LinkItem("My Bookings", 'user_bookings')
 account_nav_item = LinkItem("Accounts", 'account_management')

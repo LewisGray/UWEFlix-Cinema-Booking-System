@@ -77,7 +77,8 @@
               <ul class="dropdown-menu dropdown-menu-end">
                 <li><button class="dropdown-item" type="button">Accessibility</button></li>
                 {% if request.user|logged_in %}
-                  <li><a href="{% url 'account' %}"><button class="dropdown-item" type="button">Account</button></a></li>
+                <li><a href="{% url 'account' %}"><button class="dropdown-item" type="button">Account</button></a></li>
+                <li><a href="{% url 'two_factor:profile' %}"><button class="dropdown-item" type="button">2FA</button></a></li>
                   <li><button class="dropdown-item" type="button">Credits</button></li>
                 {% endif %}
               </ul>

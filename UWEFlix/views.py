@@ -6,7 +6,7 @@ from datetime import datetime
 from django.shortcuts import redirect
 from django.views.generic import ListView
 from UWEFlix.email import sendEmail
-from UWEFlix.models import ClubAccount, Film, Booking, Notification, Showing, Screens, Ticket, tempBooking
+from UWEFlix.models import ClubAccount, Film, Booking, Notification, Showing, Screens, Ticket, tempBooking,ClubRepresentative
 from UWEFlix.forms import *
 from django.contrib.auth import *
 from django.contrib.auth.decorators import *
@@ -23,7 +23,8 @@ from UWEFlix.render import dynamicRender, getFilmContext, getTopBarContext, getG
 import random
 import string
 from UWEFlix.widgets import getWidgets
-from django.contrib.auth import views as auth_views
+from django_otp import devices_for_user
+from UWEFlix.pdf import getStatementPDF
 
 # Student view presenting the UI to book tickets
 def student_view(request):
@@ -63,33 +64,11 @@ def about(request):
 def movies(request):
     return dynamicRender(request, "UWEFlix/movies.html")
 
-# The login page
+# Redirect to the 2FA login
 @unauthenticated_required
 def loginView(request):
-    # Get the login from from forms.py
-    form = LoginUserForm
-    # If the form is being posted
-    if request.method == "POST":
-        # Get the username
-        username = request.POST.get('username')
-        # Get the password
-        password = request.POST.get('password')
-        # Authenticate the user
-        user = authenticate(request, username=username, password=password)
-        # If the user exists
-        if user is not None:
-            # Login the user
-            login(request, user)
-            # Direct the user to the home page
-            return redirect('/')
-        # otherwise
-        else:
-            # Alert the user the details are incorrect
-            messages.info(request, 'Username or password is incorrect!')
-    # Put the form into the context
-    context = {'form': form}
-    # Render the page with the context
-    return dynamicRender(request, "UWEFlix/login.html", context)
+    # Redirect to the 2FA login
+    return redirect('two_factor:login')
 
 # Logout view
 def userLogout(request):
@@ -117,6 +96,10 @@ def register(request):
             user.groups.add(Group.objects.get(name="Student"))
             # Post that the account was created successfully
             messages.success(request, 'Account ' + username + ' created successfully!')
+            #
+            for device in devices_for_user(user):
+                #
+                device.delete()
             # Redirect the user to the login page
             return redirect('login')
     # Put the form into the context
@@ -173,6 +156,9 @@ def noAccess(request):
 @permitted(roles=["Cinema Manager", "Cinema Employee"])
 # Function to allow the addition of films to the database
 def log_film(request):
+    user = ClubRepresentative.objects.get(clubRepNumber = 17)
+    user.dateOfBirth = "7-12-2000"
+    user.save()
     # Define the form
     form = LogFilmForm(request.POST or None)
     # If posting
@@ -942,15 +928,16 @@ def log_clubRepresentative(request):
         if form.is_valid():
             password = ''.join(random.choices(string.ascii_lowercase, k=10))
             clubRep = form.save(commit=False)
-            clubRep.save()
+            #clubRep.save()
             #Create a new user to allow the rep to login using their rep number and password
             clubRepUser = User(
                 username = str(clubRep.clubRepNumber),
+                email = clubRep.email
             )
 
             clubRepUser.set_password(password)
             clubRepUser.save()
-            # Set the user's group to club rep - the basic level account
+            # Set the user's group to club rep
             clubRepUser.groups.add(Group.objects.get(name="Club Representative"))
             clubRep.representative = clubRepUser
             clubRep.clubRepPassword = password
@@ -989,7 +976,88 @@ def removeClubRepresentative(request,object):
         clubRep.delete()
         return redirect("clubRepresentative_management")
     return dynamicRender(request, "UWEFlix/CRUD/remove.html",{"object": clubRep.clubRepNumber})
-
+#
+@login_required(login_url='login')
+@permitted(roles=["Account Manager"])
+def viewStatement(request, account_id):
+    #
+    class Transaction():
+        #
+        def __init__(self, booking, date, time, desciption):
+            #
+            self.booking = booking
+            #
+            self.date = date
+            #
+            self.time = time
+            #
+            self.description = desciption
+    #
+    months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
+    #
+    account = ClubAccount.objects.get(id = account_id)
+    #
+    club_rep = account.club.representative.representative
+    #
+    bookings = Booking.objects.filter(customer = club_rep).order_by('-time_booked')
+    #
+    current_month = datetime.now().month
+    #
+    current_year = datetime.now().year
+    #
+    booking_list = []
+    #
+    total_cost = [0]
+    #
+    for booking in bookings:
+        #
+        #if booking.time_booked.month == current_month and booking.time_booked.year == current_year:
+        #
+        date = booking.time_booked.strftime("%m/%d/%Y")
+        #
+        time = booking.time_booked.strftime("%H:%M")
+        #
+        description = f"Ticket(s) purchased for {booking.showing.film.title} at showing {booking.showing.id}"
+        #
+        booking_list.append(Transaction(booking, date, time, description))
+        #
+        total_cost.append(total_cost[-1] + booking.cost)
+        #
+        #else:
+            #
+            #break
+    #
+    todays_date = datetime.now().strftime("%m/%d/%Y")
+    #
+    start_date = "01"+todays_date[2:]
+    #
+    statement = {
+        "account_name": account.account_title,
+        "rep_name": f"{account.club.representative.firstName} {account.club.representative.lastName}",
+        "transactions": zip(booking_list, total_cost[1:]),
+        "booking_year": current_year,
+        "booking_month": months[current_month],
+        "no_bookings": False,
+        "todays_date": todays_date,
+        "date_range": f"{start_date} to\n{todays_date}",
+        "card_number": "**** **** **** " + str(account.card_number)[-4:],
+        "transaction_number": len(booking_list),
+        "total": total_cost[-1]
+    }
+    #
+    if booking_list == []:
+        #
+        statement["no_bookings"] = True
+    # If posting
+    if request.method == "POST":
+        #
+        pdf = getStatementPDF("UWEFlix/statement_pdf.html", {"statement": statement})
+        #
+        return HttpResponse(pdf, content_type='application/pdf')
+    #
+    else:
+        #
+        return dynamicRender(request, "UWEFlix/statement.html", {"statement": statement})
 
 def settleAccount(request):
     clubRep = ClubRepresentative.objects.get(representative = request.user)

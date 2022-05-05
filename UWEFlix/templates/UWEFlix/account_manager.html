@@ -15,6 +15,7 @@
 {% block fieldTwo %}<th>Club</th>{% endblock %}
 {% block fieldThree %}<th>Representative</th>{% endblock %}
 {% block fieldFour %}<th>Contact Email</th>{% endblock %}
+{% block fieldFive %}<th>Statements</th>{% endblock %}
 
 <!-- These are the records in our table pulled from the database -->
 {% block dbObjects %}
@@ -24,9 +25,9 @@
     <td>{{ account.club.name }}</td>
     <td>{{ booking.club.representative.username }}</td>
     <td>{{ booking.club.email }}</td>
+    <td><a class="btn btn-sm btn-outline-info" href="{% url 'view_statement' account.id %}">View Statement</a></td>
     <td><a class="btn btn-sm btn-outline-info" href="{% url 'update_account' account.id %}">Update</a></td>
     <td><a class="btn btn-sm btn-outline-danger" href="{% url 'remove_account' account.id %}">Delete</a></td>
-
   </tr>
 {% endfor %}
 {% endblock %} 

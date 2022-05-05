@@ -1,5 +1,5 @@
-from django.urls import path
-from UWEFlix import views
+from django.urls import path, include
+from UWEFlix import views, twoFactorAuthentication
 from UWEFlix.models import Film
 from django.contrib.auth import views as auth_views
 
@@ -15,12 +15,15 @@ urlpatterns = [
     path("account_management/", views.account_management_view, name="account_management"),
     path("representative/", views.representative_view, name="represent"),
     path("about/", views.about, name="about"), 
+
+    # Account 
     path("login/", views.loginView, name="login"),
     path("accounts/login/", views.loginView, name="login_redirect"),
     path("logout/", views.userLogout, name="logout"),
     path("register/", views.register, name="register"),
     path("account/", views.accountView, name="account"),
     path("accesss_denied/", views.noAccess, name="no_access"),
+    path("two_factor_settings/", twoFactorAuthentication.twoFactorSettings, name="two_factor_settings"),
     
      path("reset_password/", 
         auth_views.PasswordResetView.as_view(template_name="UWEFlix/password_reset.html"), 
@@ -69,6 +72,7 @@ urlpatterns = [
     path("update_account/<str:account_id>", views.updateAccount, name="update_account"),
     path("remove_account/<str:account_id>", views.removeAccount, name="remove_account"),
     path("account_management/", views.account_management_view, name="account_management"),
+    path("view_statement/<str:account_id>", views.viewStatement, name="view_statement"),
     # path("movies/", views.movies, name="movies"), 
     
         

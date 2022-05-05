@@ -1,0 +1,25 @@
+{% extends "two_factor/_base_focus.html" %}
+{% load i18n %}
+{% block content %}
+<div class="accountForm">
+  <br><p></p><br><p></p><br><p></p><br><p></p>
+  <h1>{% block title %}{% trans "Enable Two-Factor Authentication" %}{% endblock %}</h1>
+  {% if wizard.steps.current == 'welcome' %}
+
+    <p>{% blocktrans trimmed %}Please make sure you have a 2FA app installed on your device e.g. Google Authenticator{% endblocktrans %}</p>
+
+  {% elif wizard.steps.current == 'generator' %}
+    <p>{% blocktrans trimmed %}Please scan the QR code below and enter the token generated:
+        {% endblocktrans %}</p>
+        <p><img src="{{ QR_URL }}" alt="QR Code" /></p>
+    {% endif %}
+
+  <form action="" method="post">{% csrf_token %}
+    {% include "two_factor/_wizard_forms.html" %}
+
+    <input type="submit" value="" class="d-none" />
+
+    {% include "two_factor/_wizard_actions.html" %}
+  </form>
+</div>
+{% endblock %}

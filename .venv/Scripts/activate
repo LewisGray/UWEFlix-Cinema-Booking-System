@@ -37,7 +37,7 @@ deactivate () {
 # unset irrelevant variables
 deactivate nondestructive
 
-VIRTUAL_ENV="C:\Users\zakme\Documents\ESD\Assignment 2\NewBranch\UWEFlix-Cinema-Booking-System\.venv"
+VIRTUAL_ENV="\\nstu-nas01.uwe.ac.uk\users3$\l25-gray\Personal\UWEFlix\UWEFlix-Cinema-Booking-System\.venv"
 export VIRTUAL_ENV
 
 _OLD_VIRTUAL_PATH="$PATH"

@@ -10,6 +10,7 @@ class ClubRepresentative(models.Model):
     dateOfBirth = models.DateField()
     clubRepPassword = models.CharField(max_length=300)
     mobile = models.CharField(max_length=11)
+    email = models.EmailField(max_length=30)
     representative = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     def __str__(self):
         return str(self.clubRepNumber)
@@ -21,7 +22,6 @@ class Club(models.Model):
     address = models.CharField(max_length=300)
     landline = models.CharField(max_length=11)
     mobile = models.CharField(max_length=11)
-    email = models.EmailField(max_length=30)
     def __str__(self):
         return str(self.name)
     

@@ -92,3 +92,14 @@
     justify-content: space-around;
     height: 100%;
   }
+
+  .statement {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    padding: auto;
+    justify-content: center;
+    padding-left: 20%;
+    padding-right: 20%;
+    align-items: center;
+}

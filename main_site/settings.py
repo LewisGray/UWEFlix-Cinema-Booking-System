@@ -39,7 +39,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    
+    # 2 Factor Authentication
+    'django_otp',
+    'django_otp.plugins.otp_static',
+    'django_otp.plugins.otp_totp',
+    'two_factor',
 ]
 
 MIDDLEWARE = [
@@ -48,6 +52,7 @@ MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django_otp.middleware.OTPMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django_session_timeout.middleware.SessionTimeoutMiddleware',
@@ -138,3 +143,7 @@ EMAIL_HOST_PASSWORD = 'Password*1'
 # Timeout Settings
 SESSION_EXPIRE_SECONDS = 1200
 SESSION_EXPIRE_AFTER_LAST_ACTIVITY = True
+
+# Two-Factor Authentication
+LOGIN_URL = 'two_factor:login'
+LOGIN_REDIRECT_URL = 'home'
