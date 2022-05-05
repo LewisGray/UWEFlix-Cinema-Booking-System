@@ -126,12 +126,18 @@ class BookTicketsForm(forms.ModelForm):
 
 # Form to book tickets for club rep
 class BookRepTicketsForm(forms.ModelForm):
+
+    def __init__(self, *args, **kwargs):
+        super(BookRepTicketsForm, self).__init__(*args, **kwargs)
+        self.fields['student_tickets'].widget.attrs['min'] = 10
     # metadata
     class Meta:
         # Using Booking models
         model = tempBooking
         # Get the ticket numbers
         fields = ['student_tickets']
+
+    
 
 
 # A form to add a film to the database
