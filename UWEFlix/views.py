@@ -823,8 +823,9 @@ def booking_complete(request):
 #complete page
 @login_required(login_url='login')
 def booking_success(request):
-    return dynamicRender(request, "UWEFlix/complete_booking.html")
-
+    booking_list = Booking.objects.filter(customer=request.user)
+    # return dynamicRender(request, "UWEFlix/complete_booking.html")
+    return dynamicRender(request, "UWEFlix/userBookings_manager.html", {'booking_list': booking_list, 'success_message': 'Your booking has been successful!'})
 
 
 @login_required(login_url='login')

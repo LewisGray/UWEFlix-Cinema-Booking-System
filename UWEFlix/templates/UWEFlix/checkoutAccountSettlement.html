@@ -71,7 +71,6 @@
             // Successful capture! For dev/demo purposes:
             console.log('Capture result', orderData, JSON.stringify(orderData, null, 2));
             const transaction = orderData.purchase_units[0].payments.captures[0];
-            alert(`Transaction ${transaction.status}: ${transaction.id}\n\nSee console for all available details`);
             completeSettlement()
 
             // When ready to go live, remove the alert and show a success message within this page. For example:
@@ -94,7 +93,6 @@
         .then((response) => response.json())
 	    	.then((data) => {
 				console.log('Success:', data);
-				alert('Transaction completed');
 				window.location.href = "{% url 'home' %}"
 
 				})
