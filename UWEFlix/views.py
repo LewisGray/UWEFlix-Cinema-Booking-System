@@ -687,7 +687,10 @@ def bookFilm(request, title):
         showing_list_date_seperated = []
         tempTest = []
 
+        print ('1. OG Showing list:', showing_list)
         for showing in showing_list:
+            print ('2. SHOWING in Showing list:', showing)
+
             if current_date != showing.date:
                 tempTest = []
                 tempTest.append(showing.date)
@@ -696,11 +699,11 @@ def bookFilm(request, title):
                 current_date = showing.date
             else: 
                 tempTest[1].append(showing)
-            tempTest = []
+                tempTest = []
             
             showing_list_date_seperated.append(tempTest)
         # print(showing_list)
-        print('NEW SHOWING LIST!: ', showing_list_date_seperated)
+        print('3. NEW SHOWING LIST!: ', showing_list_date_seperated)
 
     # If there are no showings
     except Showing.DoesNotExist:
