@@ -293,6 +293,8 @@ def log_booking(request):
             #messages.success(request, 'Booking ' + booking.id + ' created successfully!')
             # Return the user to the homepage
             return redirect("booking_management")
+        else:
+            return dynamicRender(request, "UWEFlix/CRUD/form.html", {"form": form})
     # Otherwise
     else:
         # Take the user to the film creator page
