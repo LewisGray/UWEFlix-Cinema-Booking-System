@@ -103,3 +103,7 @@
     padding-right: 20%;
     align-items: center;
 }
+
+.widget_button {
+    margin: 5px;
+}

@@ -4,13 +4,14 @@
   <body>
     <h1>Booking Summary</h1>
     <p>
-    {{ booking.customer.username }}
-    {{ booking.showing.film.title }}
-    {{ booking.showing.date }}
-    {{ booking.showing.time }}
-    {{ booking.student_tickets }}
-    {{ booking.cost }}
-    Your discount rate is : {{account.discountRate}}
+      <br>Rep Number: {{ booking.customer.username }}
+      <br>Film: {{ booking.showing.film.title }}
+      <br>Date: {{ booking.showing.date }}
+      <br>Time: {{ booking.showing.time }}
+      <br>Student Tickets: {{ booking.student_tickets }}
+      <br>Your discount rate is : {{discountRate}}%
+      <br>Total: £{{ booking.cost }}
+      
 
     </p>
       

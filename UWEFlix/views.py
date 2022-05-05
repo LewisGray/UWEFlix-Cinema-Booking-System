@@ -678,7 +678,7 @@ def removeScreens(request,object):
 
 
 # Book a film
-@login_required(login_url='login')
+
 def bookFilm(request, title):
     # Get the film object
     film_object = Film.objects.get(title = title)
@@ -716,7 +716,7 @@ def bookFilm(request, title):
 
 
 #Book tickets
-@login_required(login_url='login')
+
 def bookTickets(request, showing_id):
     # Get the showing with matching ID
     showing = Showing.objects.get(id = showing_id)
@@ -750,7 +750,7 @@ def bookTickets(request, showing_id):
                 booking.cost = round(totalPrice,2)
                 booking.save()
                 #booking.showing.save()
-                return dynamicRender(request, "UWEFlix/clubRepCheckout.html", {"booking": booking,"account":clubAccount})
+                return dynamicRender(request, "UWEFlix/clubRepCheckout.html", {"booking": booking,"account":clubAccount,"discountRate":clubAccount.discountRate*100})
                 # Save the models
                 #messages.success(request, 'Booking ' + booking.id + ' created successfully!')
             else:
@@ -770,7 +770,10 @@ def bookTickets(request, showing_id):
                 # Save the details
                 booking = form.save(commit=False)
                 booking.showing = showing
-                booking.customer = request.user
+                if str(request.user) == "AnonymousUser":
+                    booking.customer = User.objects.get(username = "Guest")
+                else:
+                    booking.customer = request.user
                 # get the number of each type of ticket
                 adultNum = int(request.POST.get('adult_tickets'))
                 studentNum =int(request.POST.get('student_tickets'))
@@ -799,7 +802,7 @@ def bookTickets(request, showing_id):
             return dynamicRender(request, "UWEFlix/CRUD/ticket_form.html", {"form": form})
 
 #paypal booking complete 
-@login_required(login_url='login')
+
 def booking_complete(request):
     if request.method == "POST":
         body = json.loads(request.body)
@@ -821,11 +824,9 @@ def booking_complete(request):
     return JsonResponse('Payment submitted..', safe=False)
 
 #complete page
-@login_required(login_url='login')
+
 def booking_success(request):
-    booking_list = Booking.objects.filter(customer=request.user)
-    # return dynamicRender(request, "UWEFlix/complete_booking.html")
-    return dynamicRender(request, "UWEFlix/userBookings_manager.html", {'booking_list': booking_list, 'success_message': 'Your booking has been successful!'})
+    return dynamicRender(request, "UWEFlix/complete_booking.html")
 
 
 @login_required(login_url='login')
@@ -840,9 +841,11 @@ def club_booking_complete(request,Bid,Aid):
             child_tickets = booking.child_tickets,
             adult_tickets = booking.adult_tickets,
             cost = booking.cost,
-            time_booked = datetime.now() )
+            time_booked = datetime.now(),
+            paid = False, )
             
         clubAccount.balance += confirmedBooking.cost
+        clubAccount.balance = round(clubAccount.balance,2)
         clubAccount.save()
         booking.save()
         booking.showing.save()
@@ -938,7 +941,7 @@ def log_clubRepresentative(request):
         if form.is_valid():
             password = ''.join(random.choices(string.ascii_lowercase, k=10))
             clubRep = form.save(commit=False)
-            #clubRep.save()
+            clubRep.save()
             #Create a new user to allow the rep to login using their rep number and password
             clubRepUser = User(
                 username = str(clubRep.clubRepNumber),
@@ -982,11 +985,14 @@ def updateClubRepresentative(request, object):
 @permitted(roles=["Cinema Manager", "Cinema Employee"])
 def removeClubRepresentative(request,object):
     clubRep = ClubRepresentative.objects.get(clubRepNumber = object)
+    user = User.objects.get(username = object)
     if request.method == "POST":
         clubRep.delete()
+        user.delete()
         return redirect("clubRepresentative_management")
     return dynamicRender(request, "UWEFlix/CRUD/remove.html",{"object": clubRep.clubRepNumber})
 #
+#View a statement for a club account
 @login_required(login_url='login')
 @permitted(roles=["Account Manager"])
 def viewStatement(request, account_id):
@@ -1021,21 +1027,17 @@ def viewStatement(request, account_id):
     #
     for booking in bookings:
         #
-        #if booking.time_booked.month == current_month and booking.time_booked.year == current_year:
-        #
-        date = booking.time_booked.strftime("%m/%d/%Y")
-        #
-        time = booking.time_booked.strftime("%H:%M")
-        #
-        description = f"Ticket(s) purchased for {booking.showing.film.title} at showing {booking.showing.id}"
-        #
-        booking_list.append(Transaction(booking, date, time, description))
-        #
-        total_cost.append(total_cost[-1] + booking.cost)
-        #
-        #else:
+        if booking.time_booked.month == current_month and booking.time_booked.year == current_year:
             #
-            #break
+            date = booking.time_booked.strftime("%m/%d/%Y")
+            #
+            time = booking.time_booked.strftime("%H:%M")
+            #
+            description = f"Ticket(s) purchased for {booking.showing.film.title} at showing {booking.showing.id}"
+            #
+            booking_list.append(Transaction(booking, date, time, description))
+            #
+            total_cost.append(total_cost[-1] + booking.cost)
     #
     todays_date = datetime.now().strftime("%m/%d/%Y")
     #
@@ -1080,7 +1082,12 @@ def settle(request):
     if request.method == "POST":
         body = json.loads(request.body)
         clubAccount = ClubAccount.objects.get(id = body['accountID'])
+        clubBookingList = Booking.objects.filter(customer = request.user, paid = False)
+        for each in clubBookingList:
+            each.paid = True
+            each.save()
         clubAccount.balance = 0
+
         clubAccount.save()
          
     return JsonResponse('Payment submitted..', safe=False)

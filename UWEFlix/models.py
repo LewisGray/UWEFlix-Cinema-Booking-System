@@ -86,6 +86,7 @@ class Booking(models.Model):
     adult_tickets = models.IntegerField(default=0, validators=[MinValueValidator(0)])
     time_booked = models.DateTimeField("date logged")
     cost = models.FloatField()
+    paid = models.BooleanField(default=True)
 
 class tempBooking(models.Model):
     paid = models.BooleanField(default=False)

@@ -3,14 +3,14 @@
 
     <h1>Booking Summary</h1>
     <p>
-    {{ booking.customer.username }}
-    {{ booking.showing.film.title }}
-    {{ booking.showing.date }}
-    {{ booking.showing.time }}
-    {{ booking.adult_tickets }}
-    {{ booking.student_tickets }}
-    {{ booking.child_tickets }}
-    {{ booking.cost }}
+    <br>User: {{ booking.customer.username }}
+    <br>Film: {{ booking.showing.film.title }}
+    <br>Date:{{ booking.showing.date }}
+    <br>Time: {{ booking.showing.time }}
+    <br>Adult Tickets: {{ booking.adult_tickets }}
+    <br>Student Tickets:{{ booking.student_tickets }}
+    <br>Child Tickets:{{ booking.child_tickets }}
+    <br>Total: £{{ booking.cost }}
     </p>
     
     {% endblock %}

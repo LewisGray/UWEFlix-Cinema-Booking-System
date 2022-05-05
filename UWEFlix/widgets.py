@@ -45,11 +45,11 @@ def getWidgets(group):
         #
         bookings = Booking.objects.order_by('time_booked')[:5]
         #
-        widgets.append(ListWidget("Upcoming Showings", [f"{i.film.title} in Screen {i.screen.number} at {i.date}, {i.time}" for i in showings]))
+        widgets.append(ListWidget("Upcoming Showings", [f"{i.film.title} in Screen {i.screen.number} at {i.date}, {str(i.time)[:5]}" for i in showings]))
         #
         widgets.append(ButtonWidget("Quick Actions", ["Add Film", "Add Showing", "Add Screen", "Add Club"], ["add_film", "log_showing", "log_screens", "add_club"]))
         #
-        widgets.append(ListWidget("Recent Bookings", [f"{i.customer.username} booked showing {i.showing.id} at {i.time_booked}" for i in bookings]))
+        widgets.append(ListWidget("Recent Bookings", [f"{i.customer.username} booked showing {i.showing.id} at {i.time_booked:%m/%d/%Y %H:%M}" for i in bookings]))
     #
     elif group == "Account Manager":
         #
@@ -71,9 +71,9 @@ def getWidgets(group):
                     #
                     item[1] = item[1] + booking.cost
             #
-        sorted_list = sorted(customer_list, key=lambda x: x[1], reverse=True)
+        sorted_list = sorted(customer_list, key=lambda x: x[1], reverse=True)[:3]
         #
-        widgets.append(ListWidget("Recent Bookings", [f"{i.customer.username} booked showing {i.showing.id} at {i.time_booked}" for i in bookings[:5]]))
+        widgets.append(ListWidget("Recent Bookings", [f"{i.customer.username} booked showing {i.showing.id} at {i.time_booked:%m/%d/%Y %H:%M}" for i in bookings[:5]]))
         #
         widgets.append(ButtonWidget("Quick Actions", ["Add Account", "Add Club", "View Statements"], ["add_account", "add_club", "add_account"]))
         #

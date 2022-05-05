@@ -5,29 +5,34 @@
     <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
         {% for widget in widgets %}
             <div class="col">
-                <div class="card shadow-sm">
-                    <div class="card-body">
-                        <h5 class="card-title">{{ widget.title }}</h5>
-                        {% if widget|is_list %}
-                            <ul>
-                                {% for item in widget.items %}
-                                    <li>{{ item }}</li>
-                                {% endfor %}
-                            </ul>
-                        {% endif %}
-                        {% if widget|is_button %}
-                            <div class="widget-button-box">
-                                {% for item in widget.buttons %}
-                                    <a href="{% url item.href %}">
-                                        <button type="button" class="btn btn-sm btn-outline-secondary">
-                                            {{ item.text }}
-                                        </button>
-                                    </a>
-                                {% endfor %}
-                            </div>
-                        {% endif %}
+                {% if widget|is_list %}
+                    <div class="card" style="width: 14rem;">
+                        <div class="card-header">
+                            {{ widget.title }}
+                        </div>
+                        <ul class="list-group list-group-flush">
+                            {% for item in widget.items %}
+                                <li class="list-group-item">{{ item }}</li>
+                            {% endfor %}
+                        </ul>
                     </div>
-                </div>
+                {% endif %}
+                {% if widget|is_button %}
+                    <div class="card" style="width: 14rem;">
+                        <div class="card-header">
+                            {{ widget.title }}
+                        </div>
+                        <div class="widget-button-box">
+                            {% for item in widget.buttons %}
+                                <a href="{% url item.href %}">
+                                    <button type="button" style="margin: 5px;" class="btn btn-sm btn-outline-secondary widget_button">
+                                        {{ item.text }}
+                                    </button>
+                                </a>
+                            {% endfor %}
+                        </div>
+                    </div>
+                {% endif %}
             </div>
         {% endfor %}
     </div>
