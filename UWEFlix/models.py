@@ -82,8 +82,8 @@ class Booking(models.Model):
     customer = models.ForeignKey(User, on_delete=models.PROTECT)
     showing = models.ForeignKey(Showing, on_delete=models.PROTECT)
     student_tickets = models.IntegerField(validators=[MinValueValidator(0)])
-    child_tickets = models.IntegerField(default=0)
-    adult_tickets = models.IntegerField(default=0)
+    child_tickets = models.IntegerField(default=0, validators=[MinValueValidator(0)])
+    adult_tickets = models.IntegerField(default=0, validators=[MinValueValidator(0)])
     time_booked = models.DateTimeField("date logged")
     cost = models.FloatField()
 
@@ -92,8 +92,8 @@ class tempBooking(models.Model):
     customer = models.ForeignKey(User, on_delete=models.PROTECT)
     showing = models.ForeignKey(Showing, on_delete=models.PROTECT)
     student_tickets = models.IntegerField(validators=[MinValueValidator(0)])
-    child_tickets = models.IntegerField(validators=[MinValueValidator(0)])
-    adult_tickets = models.IntegerField(validators=[MinValueValidator(0)])
+    child_tickets = models.IntegerField(default=0, validators=[MinValueValidator(0)])
+    adult_tickets = models.IntegerField(default=0, validators=[MinValueValidator(0)])
     cost = models.FloatField()
     
 class Ticket(models.Model):
