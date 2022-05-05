@@ -20,6 +20,7 @@ class ClubRepresentative(models.Model):
         return str(self.clubRepNumber)
 
 
+
 class Club(models.Model):
     name = models.CharField(max_length=300, primary_key=True)
     representative = models.ForeignKey(ClubRepresentative, on_delete=models.PROTECT)
@@ -77,6 +78,7 @@ class Customer(models.Model):
     email = models.EmailField()
     card_number = models.IntegerField()
     expiry_date = models.DateField()
+
 
 class Booking(models.Model):
     customer = models.ForeignKey(User, on_delete=models.PROTECT)
