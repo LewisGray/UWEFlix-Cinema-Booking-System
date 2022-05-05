@@ -682,13 +682,35 @@ def bookFilm(request, title):
     # Try
     try:
         # Get the showing list
-        showing_list = Showing.objects.filter(film = film_object)
+        showing_list = Showing.objects.filter(film = film_object).order_by('date')
+        current_date = None
+        showing_list_date_seperated = []
+        tempTest = []
+
+        print ('1. OG Showing list:', showing_list)
+        for showing in showing_list:
+            print ('2. SHOWING in Showing list:', showing)
+
+            if current_date != showing.date:
+                tempTest = []
+                tempTest.append(showing.date)
+                tempTest.append([])
+                tempTest[1].append(showing)
+                current_date = showing.date
+            else: 
+                tempTest[1].append(showing)
+                tempTest = []
+            
+            showing_list_date_seperated.append(tempTest)
+        # print(showing_list)
+        print('3. NEW SHOWING LIST!: ', showing_list_date_seperated)
+
     # If there are no showings
     except Showing.DoesNotExist:
         # Return home
         return redirect('home')
     # Otherwise render the userBookFilm, passing in the film title
-    return dynamicRender(request, "UWEFlix/userBookFilm_manager.html", {'showing_list':showing_list, 'filmTitle': title})
+    return dynamicRender(request, "UWEFlix/userBookFilm_manager.html", {'showing_list':showing_list_date_seperated, 'filmTitle': title})
 
 
 #Book tickets

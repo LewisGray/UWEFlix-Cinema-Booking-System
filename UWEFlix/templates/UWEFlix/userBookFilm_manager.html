@@ -1,39 +1,51 @@
-{% extends "UWEFlix/placeholder.html" %}
-{% block content %}
-  <body>
-    <main role="main">
+{% extends "UWEFlix/placeholder.html" %} {% block content %}
+<body>
+  <main role="main">
+   
+    <section class="jumbotron text-center">
+      <div class="container py-5">
+        <h1 class="jumbotron-heading">Showings for {{ filmTitle }}&nbsp;&nbsp;</h1>
+      </div>
+    </section>
 
-      <section class="jumbotron text-center">
-        <div class="container py-5">
-          <h1 class="jumbotron-heading">Showings for {{ filmTitle }}&nbsp;&nbsp;</h1>
-        </div>
-        <div class="album py-5 bg-light">
-          <p class="border-middlePage">
-            <!-- <div class="card card-body"> -->
-              <table class="table table-sm table-hover">
-                <thead>
-                  <th>Film</th>
-                  <th>Date</th>
-                  <th>Time</th>
-                  <th>Screen</th>
-                  <th>Book</th>
-              </thead>
-              <tbody>
-                {% for showing in showing_list %}
-                  <tr>
-                    <td>{{ showing.film.title }}</td>
-                    <td>{{ showing.date }}</td>
-                    <td>{{ showing.time }}</td>
-                    <td>{{ showing.screen }}</td>
-                    <td><a class="btn btn-sm btn-outline-info" href="{% url 'book_ticket' showing.id %}">Book!</a></td>
-                  </tr>
-                {% endfor %}
-                </tbody>
-              </table>
-            <!-- </div>  -->
-        </div>
-      </section>
-      
-    </main>
-  </body>
+
+
+
+    <div class="container py-5">
+
+      <!-- <div class="row row-cols-auto"> -->
+        {% for showing in showing_list %}
+
+        <h1 class="display-6">{{ showing.0 }}</h1>
+
+        <div class="row row-cols-auto">
+
+        {% for item in showing.1 %}
+          <div class="col">
+            <div class="card" style="width: 14rem">
+              <div class="card-body">
+                <h5 class="card-title">{{ item.time }}</h5>
+                <h6 class="card-subtitle mb-2 text-muted">{{ item.date }}</h6>
+                <p class="card-text">Screen: {{ item.screen }}</p>
+                 <a
+                  class="btn btn-primary"
+                  href="{% url 'book_ticket' item.id %}"
+                  >Book!</a
+                >
+              </div>
+            </div>
+          </div>
+
+          
+
+        {% endfor %}
+      </div>
+
+
+
+        {% endfor %}
+      <!-- </div> -->
+    </div>
+  </main>
+</body>
 {% endblock %}
