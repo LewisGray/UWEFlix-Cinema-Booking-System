@@ -4,5 +4,5 @@ from django.contrib.auth import views as auth_views
 
 # Return the 2FA settings page
 def twoFactorSettings(request):
-    # Return the 
+    # Return the user to their homepage
     return dynamicRender(request, "UWEFlix/student.html")

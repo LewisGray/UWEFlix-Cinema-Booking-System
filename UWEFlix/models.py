@@ -45,12 +45,10 @@ class Screens(models.Model):
 
 class Film(models.Model):
     title = models.CharField(max_length=300)
-    #rating = models.IntegerField(max_length=1)
     duration = models.IntegerField()
     short_description = models.CharField(max_length=300)
     long_description = models.CharField(max_length=300)
     image_URL = models.URLField()
-    #trailer_url = models.URLField()
     upload_date = models.DateTimeField("date logged")
     def __str__(self):
         return self.title
@@ -81,6 +79,7 @@ class Booking(models.Model):
     adult_tickets = models.IntegerField()
     time_booked = models.DateTimeField("date logged")
     cost = models.FloatField()
+    paid = models.BooleanField(default=True)
 
 class tempBooking(models.Model):
     paid = models.BooleanField(default=False)
@@ -104,7 +103,3 @@ class Notification(models.Model):
     sent_date = models.DateTimeField("date logged")
     receiver = models.ForeignKey(User, on_delete=models.PROTECT)
     seen = models.IntegerField(default=0)
-
-#class UserProfile(models.Model):
-#    user = models.OneToOneField(User, on_delete=models.CASCADE)
-#    unseen_notifications = models.IntegerField()

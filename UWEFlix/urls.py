@@ -41,48 +41,54 @@ urlpatterns = [
         auth_views.PasswordResetCompleteView.as_view(template_name="UWEFlix/password_reset_done.html"), 
         name="password_reset_complete"),
 
-
+    #Paths for film CRUD
     path("add_film/", views.log_film, name="add_film"),
     path("update_film/<str:filmName>", views.updateFilm, name="update_film"),
     path("remove_film/<str:object>", views.removeFilm, name="remove_film"),
     
-    #Added paths for club rep CRUD
+    #Paths for club rep CRUD
     path("add_clubRepresentative/", views.log_clubRepresentative, name="add_clubRepresentative"),
     path("update_clubRepresentative/<str:object>", views.updateClubRepresentative, name="update_clubRepresentative"),
     path("remove_clubRepresentative/<str:object>", views.removeClubRepresentative, name="remove_clubRepresentative"),
     path("clubRepresentative_management/", views.clubRepresentative_management_view, name="clubRepresentative_management"),
-    ##############################
-
+    
+    #Paths for club CRUD
     path("add_club/", views.log_club, name="add_club"),
     path("update_club/<str:clubName>", views.updateClub, name="update_club"),
     path("remove_club/<str:object>", views.removeClub, name="remove_club"),
     
+    #Paths for booking CRUD
+    path("booking_management/", views.booking_management_view, name="booking_management"),
     path("add_booking/", views.log_booking, name="add_booking"),
     path("update_booking/<str:booking_id>", views.updateBooking, name="update_booking"),
     path("remove_booking/<str:booking_id>", views.removeBooking, name="remove_booking"),
     
-    path("booking_management/", views.booking_management_view, name="booking_management"),
+    #Paths for user CRUD
     path("add_user/", views.log_user, name="add_user"),
     path("update_user/<str:username>", views.updateUser, name="update_user"),
     path("remove_user/<str:username>", views.removeUser, name="remove_user"),
-    
     path("user_management/", views.user_management_view, name="user_management"),
+    
+    #Path personal booking page for the user
     path("my_bookings/", views.user_bookings, name="user_bookings"),
+
+    #Paths for clubAccount CRUD
     path("add_account/", views.log_account, name="add_account"),
     path("update_account/<str:account_id>", views.updateAccount, name="update_account"),
     path("remove_account/<str:account_id>", views.removeAccount, name="remove_account"),
     path("account_management/", views.account_management_view, name="account_management"),
+
+    #Path for view statements page
     path("view_statement/<str:account_id>", views.viewStatement, name="view_statement"),
-    # path("movies/", views.movies, name="movies"), 
     
         
-    #Screens
+    #Path for screen CRUD
     path("screen/", views.screen_view, name="screens"), 
     path("log_screens/", views.log_screens, name="log_screens"), 
     path("updateScreens/<str:object>", views.updateScreens, name="updateScreens"), 
     path("removeScreens/<str:object>", views.removeScreens, name="removeScreens"), 
     
-    #Showing
+    #Path for showing CRUD
     path("showing/", views.showing_view, name="showing"),
     path("addShowing/", views.log_showing, name="log_showing"), 
     path("updateShowing/<str:object>", views.updateShowings, name="updateShowings"), 

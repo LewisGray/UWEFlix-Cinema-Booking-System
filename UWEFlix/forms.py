@@ -54,7 +54,7 @@ class LogUserForm(forms.ModelForm):
         # Define the fields to be included in the film
         fields = ("username", "email")
 
-# A form to add a user to the database
+# A form to add a booking to the database
 class LogBookingForm(forms.ModelForm):
     # Metadata class
     class Meta:
@@ -63,7 +63,7 @@ class LogBookingForm(forms.ModelForm):
         # Define the fields to be included in the film
         fields = ('customer', 'showing', 'adult_tickets', 'student_tickets', 'child_tickets')
 
-# A form to add a user to the database
+# A form to add a club account to the database
 class LogAccountForm(forms.ModelForm):
     # Metadata class
     class Meta:
@@ -92,7 +92,7 @@ class LoginUserForm(forms.ModelForm):
         # Set the password as a password input to hide the text
         widgets = {'password': forms.PasswordInput()}
 
-#
+#Form to update a user account
 class UpdateAccountForm(forms.ModelForm):
     # metadata
     class Meta:
@@ -121,7 +121,7 @@ class BookRepTicketsForm(forms.ModelForm):
         fields = ['student_tickets']
 
 
-# A form to add a film to the database
+# A form to add a club rep to the database
 class LogClubRepresentativeForm(forms.ModelForm):
     # Metadata class
     class Meta:
