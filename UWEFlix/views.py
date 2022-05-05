@@ -25,6 +25,7 @@ import string
 from UWEFlix.widgets import getWidgets
 from django_otp import devices_for_user
 from UWEFlix.pdf import getStatementPDF
+from django.db.models import ProtectedError
 
 # Student view presenting the UI to book tickets
 def student_view(request):
@@ -59,7 +60,9 @@ def widgetHome(request):
 # About page view navigated from navbar
 def about(request):
     return dynamicRender(request, "UWEFlix/about.html")
-
+# About page view navigated from navbar
+def error(request):
+    return dynamicRender(request, "UWEFlix/error.html")
 # View to provide representative a UI to manage films
 def movies(request):
     return dynamicRender(request, "UWEFlix/movies.html")
@@ -213,12 +216,16 @@ def removeFilm(request,object):
         # If the film isn't currently showing
         if current_showing == False:
             # Delete the film from the database
-            film.delete()
+            try:
+                film.delete()
+            except ProtectedError:
+                error_message = "This object can't be deleted!!"
+                return redirect('error')
         return redirect("film_management")
     return dynamicRender(request, "UWEFlix/CRUD/remove.html",{"object": film.title})
 
 
-#Remove a film from the database
+
 @login_required(login_url='login')
 @permitted(roles=["Cinema Manager", "Account Manager"])
 # Function to allow the addition of clubss to the database
@@ -262,7 +269,12 @@ def updateClub(request,clubName):
 def removeClub(request,object):
     club = Club.objects.get(name = object)
     if request.method == "POST":
-        club.delete()
+        try:
+            club.delete()
+        except ProtectedError:
+            error_message = "This object can't be deleted!!"
+            return redirect('error')
+        
         return redirect("club_management")
     return dynamicRender(request, "UWEFlix/CRUD/remove.html",{"object": club.name})
 
@@ -348,7 +360,12 @@ def removeBooking(request, booking_id):
         #
         booking.showing.taken_tickets -= ticket_number
         # Delete the booking
-        booking.delete()
+        try:
+            booking.delete()
+        except ProtectedError:
+            error_message = "This object can't be deleted!!"
+            return redirect('error')
+        
         # Delete any notifications for the booking
         deleteNotification('remove_booking', str(booking_id))
         #messages.success(request, 'Booking ' + booking_id + ' deleted successfully!')
@@ -453,7 +470,12 @@ def removeUser(request, username):
     # If the form is being posted
     if request.method == "POST":
         # Delete the user
-        user.delete()
+        try:
+            user.delete()
+        except ProtectedError:
+            error_message = "This object can't be deleted!!"
+            return redirect('error')
+        
         # messages.success(request, 'Account ' + username + ' deleted successfully!')
         # Return to the user management page
         return redirect("user_management")
@@ -562,7 +584,12 @@ def removeAccount(request, account_id):
     # If the form is being posted
     if request.method == "POST":
         # Delete the account
-        account.delete()
+        try:
+            account.delete()
+        except ProtectedError:
+            error_message = "This object can't be deleted!!"
+            return redirect('error')
+        
         #messages.success(request, 'Booking ' + booking_id + ' deleted successfully!')
         # Return to the booking management page
         return redirect("account_management")
@@ -618,7 +645,12 @@ def updateShowings(request, object):
 def removeShowings(request,object):
     showingName = Showing.objects.get(id = object)
     if request.method == "POST":
-        showingName.delete()
+        try:
+            showingName.delete()
+        except ProtectedError:
+            error_message = "This object can't be deleted!!"
+            return redirect('error')
+        
         return redirect("showing")
     return dynamicRender(request, "UWEFlix/CRUD/remove.html",{"object": showingName.id})
 
@@ -672,7 +704,12 @@ def updateScreens(request, object):
 def removeScreens(request,object):
     screenName = Screens.objects.get(id = object)
     if request.method == "POST":
-        screenName.delete()
+        try:
+            screenName.delete()
+        except ProtectedError:
+            error_message = "This object can't be deleted!!"
+            return redirect('error')
+        
         return redirect("screens")
     return dynamicRender(request, "UWEFlix/CRUD/remove.html",{"object": screenName.id})
 
@@ -987,8 +1024,14 @@ def removeClubRepresentative(request,object):
     clubRep = ClubRepresentative.objects.get(clubRepNumber = object)
     user = User.objects.get(username = object)
     if request.method == "POST":
-        clubRep.delete()
-        user.delete()
+        try:
+            clubRep.delete()
+            user.delete()
+        except ProtectedError:
+            error_message = "This object can't be deleted!!"
+            return redirect('error')
+            
+        
         return redirect("clubRepresentative_management")
     return dynamicRender(request, "UWEFlix/CRUD/remove.html",{"object": clubRep.clubRepNumber})
 #

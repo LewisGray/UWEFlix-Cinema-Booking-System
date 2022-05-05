@@ -1,0 +1,8 @@
+{% extends "UWEFlix/placeholder.html" %}
+{% block title %}
+Error
+{% endblock %}
+{% block content %}
+<p> You have attempted a forbidden action</p>
+<br><a href = "{% url 'home' %}" ><button type="button" class="btn btn-dark">Return to homepage</button></a>
+{% endblock %}

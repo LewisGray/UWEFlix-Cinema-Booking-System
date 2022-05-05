@@ -102,5 +102,7 @@ urlpatterns = [
 
      # Settle Club Account
     path("settleAccount/", views.settleAccount, name="settleAccount"),
-    path("settle/", views.settle, name="settle")
-]
+    path("settle/", views.settle, name="settle"),
+
+    path("error/", views.error, name="error")
+]   
