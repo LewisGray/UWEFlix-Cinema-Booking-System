@@ -3,6 +3,8 @@ from django import forms
 from UWEFlix.models import ClubAccount, Film,Club,tempBooking, Showing, Screens,Booking,ClubRepresentative
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
+from django.db import models
+from django.core.validators import MinValueValidator
 
 # Date widget for declaring input types within form
 class DateInput(forms.DateInput):
@@ -115,6 +117,7 @@ class BookTicketsForm(forms.ModelForm):
 class BookRepTicketsForm(forms.ModelForm):
     # metadata
     class Meta:
+
         # Using Booking models
         model = tempBooking
         # Get the ticket numbers

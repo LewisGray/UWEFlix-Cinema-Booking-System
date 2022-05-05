@@ -887,6 +887,7 @@ def log_clubRepresentative(request):
         if form.is_valid():
             password = ''.join(random.choices(string.ascii_lowercase, k=10))
             clubRep = form.save(commit=False)
+            clubRep.save()
             #Create a new user to allow the rep to login using their rep number and password
             clubRepUser = User(
                 username = str(clubRep.clubRepNumber),
@@ -927,8 +928,10 @@ def updateClubRepresentative(request, object):
 @permitted(roles=["Cinema Manager", "Cinema Employee"])
 def removeClubRepresentative(request,object):
     clubRep = ClubRepresentative.objects.get(clubRepNumber = object)
+    user = User.objects.get(username = object)
     if request.method == "POST":
         clubRep.delete()
+        user.delete()
         return redirect("clubRepresentative_management")
     return dynamicRender(request, "UWEFlix/CRUD/remove.html",{"object": clubRep.clubRepNumber})
 
