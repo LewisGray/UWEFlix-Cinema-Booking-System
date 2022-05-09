@@ -12,6 +12,9 @@ class DateInput(forms.DateInput):
 
 # A form to add a film to the database
 class LogFilmForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super(LogFilmForm, self).__init__(*args, **kwargs)
+        self.fields['duration'].widget.attrs['min'] = 0
     # Metadata class
     class Meta:
         # Set the model type to film
@@ -43,11 +46,6 @@ class LogShowingForm(forms.ModelForm):
         fields = ('date', 'time', 'film', 'taken_tickets', 'screen')
         widgets = { "date": DateInput() }
     
-    def clean_shortcodeurl(self):
-        data = self.cleaned_data['date']
-        if "my_custom_example_url" not in data:
-            raise ValidationError("my_custom_example_url has to be in the provided data.")
-        return data
         
 # A form to add screen to the database
 class LogScreenForm(forms.ModelForm):
