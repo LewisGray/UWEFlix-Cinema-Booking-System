@@ -17,8 +17,8 @@
 {% for film in filmList %}
   <tr>
     <td>{{film.title}}</td>
-    <td>{{film.duration}}</td>
     <td>{{film.short_description}}</td>
+    <td>{{film.duration}}</td>
     <td>{{film.upload_date}}</td>
     <td><a class="btn btn-sm btn-outline-info" href="{% url 'update_film' film.title %}">Update</a></td>
     <td><a class="btn btn-sm btn-outline-danger" href="{% url 'remove_film' film.title %}">Delete</a></td>
