@@ -1034,12 +1034,13 @@ def removeClubRepresentative(request,object):
         
         return redirect("clubRepresentative_management")
     return dynamicRender(request, "UWEFlix/CRUD/remove.html",{"object": clubRep.clubRepNumber})
+
 #
 #View a statement for a club account
 @login_required(login_url='login')
 @permitted(roles=["Account Manager"])
 def viewStatement(request, account_id):
-    #
+    # Create a transaction object
     class Transaction():
         #
         def __init__(self, booking, date, time, desciption):
@@ -1072,7 +1073,7 @@ def viewStatement(request, account_id):
         #
         if booking.time_booked.month == current_month and booking.time_booked.year == current_year:
             #
-            date = booking.time_booked.strftime("%m/%d/%Y")
+            date = booking.time_booked.strftime("%d/%m/%Y")
             #
             time = booking.time_booked.strftime("%H:%M")
             #
@@ -1082,7 +1083,7 @@ def viewStatement(request, account_id):
             #
             total_cost.append(total_cost[-1] + booking.cost)
     #
-    todays_date = datetime.now().strftime("%m/%d/%Y")
+    todays_date = datetime.now().strftime("%d/%m/%Y")
     #
     start_date = "01"+todays_date[2:]
     #
