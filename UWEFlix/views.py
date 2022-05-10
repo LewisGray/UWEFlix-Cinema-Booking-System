@@ -994,6 +994,8 @@ def log_clubRepresentative(request):
             clubRep.save()
             # Return the user to the homepage
             return redirect("clubRepresentative_management")
+        else:
+            return dynamicRender(request, "UWEFlix/CRUD/form.html", {"form": form})
     # Otherwise
     else:
         # Take the user to the clubRep creator page
