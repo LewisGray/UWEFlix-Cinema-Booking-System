@@ -31,11 +31,6 @@ class AddClubForm(forms.ModelForm):
         # Define the fields to be included in the film
         fields = ("name", "representative", "address", "landline", "mobile")
         
-def present_or_future_date(value):
-    if value < datetime.date.today():
-        raise forms.ValidationError("The date cannot be in the past!")
-    return value
-
 # A form to add a showings to the database
 class LogShowingForm(forms.ModelForm):
     # Metadata class
@@ -76,13 +71,20 @@ class LogBookingForm(forms.ModelForm):
 
 # A form to add a user to the database
 class LogAccountForm(forms.ModelForm):
+    # date = forms.DateField(
+    #     required=False,
+    #     widget=MonthYearWidget(years=xrange(2004,2010))
+    # # )
+    # def __init__(self, *args, **kwargs):
+    #     super(LogAccountForm, self).__init__(*args, **kwargs)
+    #     self.fields['card_number'].widget.attrs['max'] = 16
     # Metadata class
     class Meta:
         # Set the model type to film
         model = ClubAccount
         # Define the fields to be included in the film
         fields = ('account_title', 'card_number', 'expiry_date', 'club','discountRate')
-
+        widgets = { "expiry_date": DateInput() }
 # A form to create a new user
 class CreateUserForm(UserCreationForm):
     # metadata
@@ -140,6 +142,9 @@ class BookRepTicketsForm(forms.ModelForm):
 
 # A form to add a film to the database
 class LogClubRepresentativeForm(forms.ModelForm):
+    # def __init__(self, *args, **kwargs):
+    #     super(LogClubRepresentativeForm, self).__init__(*args, **kwargs)
+    #     self.fields['mobile'].widget.attrs['max'] = 11
     # Metadata class
     class Meta:
         # Set the model type to film

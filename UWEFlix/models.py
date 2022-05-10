@@ -2,7 +2,7 @@ from ctypes import addressof
 from django.db import models
 from django.contrib.auth.models import User
 import datetime
-from django.core.validators import MinValueValidator
+from django.core.validators import MinValueValidator, MaxValueValidator
 from django.core.exceptions import ValidationError
 
 
@@ -11,7 +11,7 @@ class ClubRepresentative(models.Model):
     clubRepNumber = models.AutoField(primary_key=True)
     firstName = models.CharField(max_length=300)
     lastName = models.CharField(max_length=300)
-    dateOfBirth = models.DateField()
+    dateOfBirth = models.DateField(validators=[MaxValueValidator(datetime.date.today)])
     clubRepPassword = models.CharField(max_length=300)
     mobile = models.CharField(max_length=11)
     email = models.EmailField(max_length=30)
@@ -32,8 +32,8 @@ class Club(models.Model):
 
 class ClubAccount(models.Model):
     account_title = models.CharField(max_length=300)
-    card_number = models.IntegerField()
-    expiry_date = models.CharField(max_length=300)
+    card_number = models.PositiveIntegerField()
+    expiry_date = models.DateField(validators=[MinValueValidator(datetime.date.today)])
     club = models.ForeignKey(Club, on_delete=models.PROTECT)
     discountRate = models.FloatField(default = 0.00)
     balance = models.FloatField(default = 0.00)
@@ -41,8 +41,8 @@ class ClubAccount(models.Model):
 
 # Cinema models
 class Screens(models.Model):
-    number = models.IntegerField() 
-    capacity = models.IntegerField()
+    number = models.PositiveIntegerField() 
+    capacity = models.PositiveIntegerField() 
     def __str__(self):
         return str(self.number)
 
@@ -50,7 +50,7 @@ class Screens(models.Model):
 class Film(models.Model):
     title = models.CharField(max_length=300)
     #rating = models.IntegerField(max_length=1)
-    duration = models.IntegerField()
+    duration = models.PositiveIntegerField()
     short_description = models.CharField(max_length=300)
     long_description = models.CharField(max_length=300)
     image_URL = models.URLField()
@@ -76,14 +76,14 @@ class Customer(models.Model):
     name = models.CharField(max_length=300)
     email = models.EmailField()
     card_number = models.IntegerField()
-    expiry_date = models.DateField()
+    expiry_date = models.DateField(validators=[MinValueValidator(datetime.date.today)])
 
 class Booking(models.Model):
     customer = models.ForeignKey(User, on_delete=models.PROTECT)
     showing = models.ForeignKey(Showing, on_delete=models.PROTECT)
-    student_tickets = models.IntegerField(validators=[MinValueValidator(0)])
-    child_tickets = models.IntegerField(default=0, validators=[MinValueValidator(0)])
-    adult_tickets = models.IntegerField(default=0, validators=[MinValueValidator(0)])
+    student_tickets = models.PositiveIntegerField(validators=[MinValueValidator(0)])
+    child_tickets = models.PositiveIntegerField(default=0, validators=[MinValueValidator(0)])
+    adult_tickets = models.PositiveIntegerField(default=0, validators=[MinValueValidator(0)])
     time_booked = models.DateTimeField("date logged")
     cost = models.FloatField()
     paid = models.BooleanField(default=True)
@@ -92,9 +92,9 @@ class tempBooking(models.Model):
     paid = models.BooleanField(default=False)
     customer = models.ForeignKey(User, on_delete=models.PROTECT)
     showing = models.ForeignKey(Showing, on_delete=models.PROTECT)
-    student_tickets = models.IntegerField(validators=[MinValueValidator(0)])
-    child_tickets = models.IntegerField(default=0, validators=[MinValueValidator(0)])
-    adult_tickets = models.IntegerField(default=0, validators=[MinValueValidator(0)])
+    student_tickets = models.PositiveIntegerField(validators=[MinValueValidator(0)])
+    child_tickets = models.PositiveIntegerField(default=0, validators=[MinValueValidator(0)])
+    adult_tickets = models.PositiveIntegerField(default=0, validators=[MinValueValidator(0)])
     cost = models.FloatField()
     
 class Ticket(models.Model):
