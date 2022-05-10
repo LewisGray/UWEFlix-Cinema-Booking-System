@@ -103,17 +103,22 @@
                 <li><a href="{% url 'two_factor:profile' %}"><button class="dropdown-item" type="button">2FA</button></a></li>
                   <li><button class="dropdown-item" type="button">Credits</button></li>
                 {% endif %}
-					<li><button class="dropdown-item"  id="changeGreen">Change Font Color Green</button></li>
-					<li><button class="dropdown-item" id="changeBlack">Change Font Color Black</button></li>
-					<li><button class="dropdown-item"  id="changeRed">Change Font Color Red</button></li>
-					<li><button class="dropdown-item"  id="changeBlue">Change Font Color Blue</button></li>
-					<li><button class="dropdown-item"  id="changeWhite">Change Font Color White</button></li>
+				
+					<div class = "dropdown-divider"></div>
+					<h5 class = "dropdown-item disabled"> Accessibility Options</h5>
+					<div class = "dropdown-divider"></div>	
+          <li><button class="dropdown-item"  id="changeGreen">Change Font Color Green</button></li>
+						<li><button class="dropdown-item" id="changeBlack">Change Font Color Black</button></li>
+						<li><button class="dropdown-item"  id="changeRed">Change Font Color Red</button></li>
+						<li><button class="dropdown-item"  id="changeBlue">Change Font Color Blue</button></li>
+						<li><button class="dropdown-item"  id="changeWhite">Change Font Color White</button></li>
 
-					<li><button class="dropdown-item" id = "toggle">Invert</button></li>
-					<li><button class="dropdown-item" onclick="fontchange(18)">Font Size 18</button></li>
-					<li><button class="dropdown-item" onclick="fontchange(23)">Font Size 23</button></li>
-					<li><button class="dropdown-item" onclick="fontchange(27)">Font Size 27</button></li>
-              </ul>
+						<li><button class="dropdown-item" id = "toggle">Invert</button></li>
+						<li><button class="dropdown-item" onclick="fontchange(18)">Font Size 18</button></li>
+						<li><button class="dropdown-item" onclick="fontchange(23)">Font Size 23</button></li>
+						<li><button class="dropdown-item" onclick="fontchange(27)">Font Size 27</button></li>
+					
+			  </ul>
             </div>
           </span>
         </div>
